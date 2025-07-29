@@ -29,6 +29,10 @@
                     class="block px-5 py-2 rounded-md text-gray-600 hover:bg-gray-100 transition duration-150 ease-in-out {{ request()->routeIs('hotels.index') ? 'bg-gray-200 font-semibold' : '' }}">
                     Hotels
                 </a>
+                <a href="{{ route('users.index') }}"
+                    class="block px-5 py-2 rounded-md text-gray-600 hover:bg-gray-100 transition duration-150 ease-in-out {{ request()->routeIs('users.index') ? 'bg-gray-200 font-semibold' : '' }}">
+                    Users
+                </a>
             </div>
         </div>
     </div>

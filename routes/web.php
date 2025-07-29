@@ -4,7 +4,7 @@ use App\Http\Controllers\HotelController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoomTypeController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\UserController;
     /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */;
+
+Route::middleware('auth')->get('/users', [UserController::class, 'index'])->name('users.index');
+
 
 Route::get('/', function () {
     return view('dashboard');
