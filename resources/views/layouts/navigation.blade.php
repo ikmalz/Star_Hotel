@@ -11,8 +11,8 @@
         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
             {{ __('Dashboard') }}
         </x-nav-link>
-
-        <!-- Master Data -->
+    
+        <!-- Master Data -->    
         <div class="mt-3">
             <button 
                 @click="open = !open"
