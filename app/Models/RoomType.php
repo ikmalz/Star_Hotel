@@ -16,4 +16,9 @@ class RoomType extends Model
         'capacity',
         'nightly_rate'
     ];
+
+    public function hotel()
+    {
+        return $this->belongsTo(Hotel::class);
+    }
 }

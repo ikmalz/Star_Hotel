@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="header" >
+    <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             Hotels
         </h2>
@@ -68,6 +68,12 @@
                                             class="px-3 py-1 text-sm text-white font-medium bg-gray-400 hover:bg-gray-300 hover:text-black/20 rounded-lg transition"
                                             onclick="return confirm('Yakin ingin hapus?')">Hapus</button>
                                     </form>
+
+                                    <a 
+                                    href="{{ route('room-types.index', $hotel->id) }}"
+                                        class="px-3 py-1 text-sm text-white font-medium bg-gray-400 hover:bg-gray-500 rounded-lg transition">
+                                        Room Types
+                                    </a>
                                 </td>
                             </tr>
                             @empty

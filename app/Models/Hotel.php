@@ -17,9 +17,11 @@ class Hotel extends Model
         'customer_service_phone'
     ];
 
-    // public function roomTypes() {
-    //     return $this->hasMany(RoomType::class);
-    // }
+    public function roomTypes()
+    {
+        return $this->hasMany(RoomType::class);
+    }
+
 
     // public function ratings() {
     //     return $this->hasMany(Rating::class);
