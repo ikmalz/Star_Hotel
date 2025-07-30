@@ -14,7 +14,12 @@ class RoomType extends Model
         'name_type',
         'facility',
         'capacity',
-        'nightly_rate'
+        'nightly_rate',
+        'photos' 
+    ];
+
+    protected $casts = [
+        'photos' => 'array',
     ];
 
     public function hotel()

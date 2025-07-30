@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Room Types - {{ $hotel->name_hotel }}
+            Room Types - {{ $hotel->name_hotel }} - {{ $hotel->city }}
         </h2>
     </x-slot>
 
@@ -17,14 +17,15 @@
         </div>
         @endif
 
-        <form action="{{ route('room-types.store') }}" method="POST" class="mb-6">
+        <form action="{{ route('room-types.store') }}" method="POST" enctype="multipart/form-data" class="mb-6">
             @csrf
             <input type="hidden" name="hotel_id" value="{{ $hotel->id }}">
-            <div class="grid grid-cols-5 gap-4">
+            <div class="grid grid-cols-6 gap-4">
                 <input type="text" name="name_type" placeholder="Nama Tipe" class="border p-2 rounded" required>
                 <input type="text" name="facility" placeholder="Fasilitas" class="border p-2 rounded">
                 <input type="number" name="capacity" placeholder="Kapasitas" class="border p-2 rounded" required>
                 <input type="number" name="nightly_rate" placeholder="Harga/Malam" class="border p-2 rounded" required>
+                <input type="file" name="photos[]" multiple class="border p-2 rounded">
                 <button class="bg-gray-500 text-white rounded px-4 py-2">Tambah</button>
             </div>
         </form>
@@ -37,6 +38,7 @@
                     <th class="px-4 py-3 text-left">Fasilitas</th>
                     <th class="px-4 py-3 text-left">Kapasitas</th>
                     <th class="px-4 py-3 text-left">Harga/Malam</th>
+                    <th class="px-4 py-3 text-left">Foto</th>
                     <th class="px-4 py-3 text-center">Aksi</th>
                 </tr>
             </thead>
@@ -48,6 +50,19 @@
                     <td class="px-4 py-3">{{ $type->facility }}</td>
                     <td class="px-4 py-3">{{ $type->capacity }}</td>
                     <td class="px-4 py-3">{{ number_format($type->nightly_rate) }}</td>
+                    <td class="px-4 py-3">
+                        @if(!empty($type->photos) && is_array($type->photos))
+                        <div class="flex gap-2">
+                            @foreach($type->photos as $photo)
+                            <img src="{{ asset('storage/'.$photo) }}"
+                                class="w-12 h-12 object-cover rounded border"
+                                alt="Room Photo">
+                            @endforeach
+                        </div>
+                        @else
+                        <span class="text-gray-400">-</span>
+                        @endif
+                    </td>
                     <td class="px-4 py-3 text-center">
                         <form action="{{ route('room-types.destroy', $type->id) }}" method="POST" class="inline">
                             @csrf
@@ -61,7 +76,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="text-center py-4 text-gray-400">Belum ada room type</td>
+                    <td colspan="7" class="text-center py-4 text-gray-400">Belum ada room type</td>
                 </tr>
                 @endforelse
             </tbody>

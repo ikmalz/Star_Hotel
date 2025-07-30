@@ -9,13 +9,15 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
             $table->foreignId('room_type_id')->constrained('room_types')->onDelete('cascade');
             $table->string('room_number');
-            $table->enum('status', ['available', 'booked', 'maintenance'])->default('available');
+            $table->integer('floor')->nullable();
+            $table->enum('status', ['available', 'booked', 'occupied', 'maintenance'])->default('available');
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

@@ -25,7 +25,9 @@
                             <tr>
                                 <th class="text-left py-3 px-4">ID</th>
                                 <th class="text-left py-3 px-4">Nama Hotel</th>
-                                <th class="text-left py-3 px-4">Lokasi</th>
+                                <th class="text-left py-3 px-4">Alamat</th>
+                                <th class="text-left py-3 px-4">Kota</th>
+                                <th class="text-left py-3 px-4">Provinsi</th>
                                 <th class="text-left py-3 px-4">Deskripsi</th>
                                 <th class="text-left py-3 px-4">Gambar</th>
                                 <th class="text-left py-3 px-4">CS Phone</th>
@@ -37,7 +39,9 @@
                             <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
                                 <td class="py-3 px-4">{{ $hotel->id }}</td>
                                 <td class="py-3 px-4 font-medium">{{ $hotel->name_hotel }}</td>
-                                <td class="py-3 px-4">{{ $hotel->location }}</td>
+                                <td class="py-3 px-4">{{ $hotel->address }}</td>
+                                <td class="py-3 px-4">{{ $hotel->city }}</td>
+                                <td class="py-3 px-4">{{ $hotel->province }}</td>
                                 <td class="py-3 px-4">{{ Str::limit($hotel->description, 60) }}</td>
                                 <td class="py-3 px-4">
                                     @if($hotel->image)
@@ -49,36 +53,40 @@
                                     @endif
                                 </td>
                                 <td class="py-3 px-4">{{ $hotel->customer_service_phone }}</td>
-                                <td class="py-3 px-4 space-x-2">
-                                    <button
-                                        class="btn-edit px-3 py-1 text-sm text-white font-medium bg-gray-400 hover:bg-gray-300 hover:text-black/20 rounded-lg transition"
-                                        data-id="{{ $hotel->id }}"
-                                        data-name="{{ $hotel->name_hotel }}"
-                                        data-location="{{ $hotel->location }}"
-                                        data-description="{{ $hotel->description }}"
-                                        data-image="{{ $hotel->image }}"
-                                        data-cs="{{ $hotel->customer_service_phone }}">
-                                        Edit
-                                    </button>
+                                <td class="py-3 px-4">
+                                    <div class="flex flex-wrap items-center justify-center gap-2">
+                                        <button
+                                            class="btn-edit px-3 py-1 text-sm text-white font-medium bg-gray-400 hover:bg-gray-300 hover:text-black/20 rounded-lg transition"
+                                            data-id="{{ $hotel->id }}"
+                                            data-name="{{ $hotel->name_hotel }}"
+                                            data-address="{{ $hotel->address }}"
+                                            data-city="{{ $hotel->city }}"
+                                            data-province="{{ $hotel->province }}"
+                                            data-description="{{ $hotel->description }}"
+                                            data-image="{{ $hotel->image }}"
+                                            data-cs="{{ $hotel->customer_service_phone }}">
+                                            Edit
+                                        </button>
 
-                                    <form action="{{ route('hotels.destroy', $hotel->id) }}" method="POST" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="px-3 py-1 text-sm text-white font-medium bg-gray-400 hover:bg-gray-300 hover:text-black/20 rounded-lg transition"
-                                            onclick="return confirm('Yakin ingin hapus?')">Hapus</button>
-                                    </form>
+                                        <form action="{{ route('hotels.destroy', $hotel->id) }}" method="POST" onsubmit="return confirm('Yakin ingin hapus?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="px-3 py-1 text-sm text-white font-medium bg-gray-400 hover:bg-gray-300 hover:text-black/20 rounded-lg transition">
+                                                Hapus
+                                            </button>
+                                        </form>
 
-                                    <a 
-                                    href="{{ route('room-types.index', $hotel->id) }}"
-                                        class="px-3 py-1 text-sm text-white font-medium bg-gray-400 hover:bg-gray-500 rounded-lg transition">
-                                        Room Types
-                                    </a>
+                                        <a href="{{ route('room-types.index', $hotel->id) }}"
+                                            class="px-3 py-1 text-sm text-black/50 font-medium bg-gray-500/20 hover:bg-gray-500 hover:text-white rounded-lg transition">
+                                            Room Types
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="py-4 text-center text-gray-400">Belum ada data</td>
+                                <td colspan="9" class="py-4 text-center text-gray-400">Belum ada data</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -97,11 +105,12 @@
 
 
 
+
     <div id="hotelModal" class="fixed inset-0 hidden items-center justify-center bg-gray-800 bg-opacity-50 z-50">
         <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
             <h3 class="text-lg font-semibold mb-4">Tambah Hotel</h3>
 
-            <form id="hotelForm" action="{{ route('hotels.store') }}" method="POST">
+            <form id="hotelForm" action="{{ route('hotels.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="space-y-4">
                     <div>
@@ -111,8 +120,20 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Lokasi</label>
-                        <input type="text" name="location"
+                        <label class="block text-sm font-medium text-gray-700">Alamat</label>
+                        <input type="text" name="address"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Kota</label>
+                        <input type="text" name="city"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Provinsi</label>
+                        <input type="text" name="province"
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     </div>
 
@@ -123,9 +144,8 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Gambar (URL / path)</label>
+                        <label class="block text-sm font-medium text-gray-700">Gambar (Upload)</label>
                         <input type="file" name="image" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-
                     </div>
 
                     <div>
@@ -149,11 +169,12 @@
         </div>
     </div>
 
+
     <div id="editHotelModal" class="fixed inset-0 hidden items-center justify-center bg-gray-800 bg-opacity-50 z-50">
         <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
             <h3 class="text-lg font-semibold mb-4">Edit Hotel</h3>
 
-            <form id="editHotelForm" method="POST">
+            <form id="editHotelForm" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="id" id="edit_id">
@@ -166,8 +187,20 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Lokasi</label>
-                        <input type="text" name="location" id="edit_location"
+                        <label class="block text-sm font-medium text-gray-700">Alamat</label>
+                        <input type="text" name="address" id="edit_address"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Kota</label>
+                        <input type="text" name="city" id="edit_city"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Provinsi</label>
+                        <input type="text" name="province" id="edit_province"
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     </div>
 
@@ -178,8 +211,9 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Gambar (URL / path)</label>
-                        <input type="file" name="image" id="edit_image" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <label class="block text-sm font-medium text-gray-700">Gambar (Upload)</label>
+                        <input type="file" name="image" id="edit_image"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     </div>
 
                     <div>
@@ -202,6 +236,7 @@
             </form>
         </div>
     </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -292,7 +327,9 @@
 
                     document.getElementById('edit_id').value = currentEditId;
                     document.getElementById('edit_name_hotel').value = btn.dataset.name || '';
-                    document.getElementById('edit_location').value = btn.dataset.location || '';
+                    document.getElementById('edit_address').value = btn.dataset.address || '';
+                    document.getElementById('edit_city').value = btn.dataset.city || '';
+                    document.getElementById('edit_province').value = btn.dataset.province || '';
                     document.getElementById('edit_description').value = btn.dataset.description || '';
                     document.getElementById('edit_image').value = '';
                     document.getElementById('edit_cs').value = btn.dataset.cs || '';
@@ -301,6 +338,7 @@
                     editModal.classList.add('flex');
                 });
             });
+
 
             closeEditModalBtn.addEventListener('click', () => {
                 closeEditModal();

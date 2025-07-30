@@ -24,9 +24,25 @@ class RoomTypeController extends Controller
             'facility' => 'nullable|string',
             'capacity' => 'required|integer',
             'nightly_rate' => 'required|integer',
+            'photos.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
         ]);
 
-        RoomType::create($request->all());
+        $photoPaths = [];
+        if ($request->hasFile('photos')) {
+            foreach ($request->file('photos') as $photo) {
+                $path = $photo->store('room_photos', 'public'); 
+                $photoPaths[] = $path;
+            }
+        }
+
+        RoomType::create([
+            'hotel_id' => $request->hotel_id,
+            'name_type' => $request->name_type,
+            'facility' => $request->facility,
+            'capacity' => $request->capacity,
+            'nightly_rate' => $request->nightly_rate,
+            'photos' => $photoPaths, 
+        ]);
 
         return redirect()->back()->with('success', 'Room type berhasil ditambahkan');
     }
@@ -40,9 +56,24 @@ class RoomTypeController extends Controller
             'facility' => 'nullable|string',
             'capacity' => 'required|integer',
             'nightly_rate' => 'required|integer',
+            'photos.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $roomType->update($request->all());
+        $photoPaths = $roomType->photos ?? [];
+        if ($request->hasFile('photos')) {
+            foreach ($request->file('photos') as $photo) {
+                $path = $photo->store('room_photos', 'public');
+                $photoPaths[] = $path;
+            }
+        }
+
+        $roomType->update([
+            'name_type' => $request->name_type,
+            'facility' => $request->facility,
+            'capacity' => $request->capacity,
+            'nightly_rate' => $request->nightly_rate,
+            'photos' => $photoPaths,
+        ]);
 
         return redirect()->back()->with('success', 'Room type berhasil diperbarui');
     }

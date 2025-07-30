@@ -11,13 +11,14 @@ class RoomTypeApiController extends Controller
     public function index()
     {
         $roomTypes = RoomType::all();
+
         return response()->json([
             'message' => 'Daftar semua room type.',
             'data' => $roomTypes
         ]);
     }
 
-     public function store(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'hotel_id' => 'required|exists:hotels,id',
@@ -25,6 +26,8 @@ class RoomTypeApiController extends Controller
             'facility' => 'nullable|string',
             'capacity' => 'required|integer',
             'nightly_rate' => 'required|integer',
+            'photos' => 'nullable|array', 
+            'photos.*' => 'string',       
         ]);
 
         $roomType = RoomType::create([
@@ -33,6 +36,7 @@ class RoomTypeApiController extends Controller
             'facility' => $request->facility,
             'capacity' => $request->capacity,
             'nightly_rate' => $request->nightly_rate,
+            'photos' => $request->photos ? json_encode($request->photos) : null,
         ]);
 
         return response()->json([
@@ -73,9 +77,20 @@ class RoomTypeApiController extends Controller
             'facility' => 'nullable|string',
             'capacity' => 'sometimes|integer',
             'nightly_rate' => 'sometimes|integer',
+            'photos' => 'nullable|array',
+            'photos.*' => 'string',
         ]);
 
-        $roomType->update($request->all());
+        $roomType->update([
+            'hotel_id' => $request->hotel_id ?? $roomType->hotel_id,
+            'name_type' => $request->name_type ?? $roomType->name_type,
+            'facility' => $request->facility ?? $roomType->facility,
+            'capacity' => $request->capacity ?? $roomType->capacity,
+            'nightly_rate' => $request->nightly_rate ?? $roomType->nightly_rate,
+            'photos' => $request->has('photos')
+                ? json_encode($request->photos)
+                : $roomType->photos,
+        ]);
 
         return response()->json([
             'message' => 'Room type berhasil diperbarui.',
