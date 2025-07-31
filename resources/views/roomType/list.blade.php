@@ -12,9 +12,9 @@
         </div>
 
         @if(session('success'))
-            <div class="p-3 bg-green-200 text-green-800 rounded mb-3">
-                {{ session('success') }}
-            </div>
+        <div class="p-3 bg-green-200 text-green-800 rounded mb-3">
+            {{ session('success') }}
+        </div>
         @endif
 
         <form action="{{ route('room-types.store') }}" method="POST" enctype="multipart/form-data" class="mb-6">
@@ -45,54 +45,52 @@
             </thead>
             <tbody>
                 @forelse($roomTypes as $type)
-                    <tr class="border-t hover:bg-gray-50 transition">
-                        <td class="px-4 py-3">{{ $type->id }}</td>
-                        <td class="px-4 py-3">{{ $type->name_type }}</td>
-                        <td class="px-4 py-3">{{ $type->facility }}</td>
-                        <td class="px-4 py-3">{{ $type->capacity }}</td>
-                        <td class="px-4 py-3">{{ number_format($type->nightly_rate) }}</td>
-                        <td class="px-4 py-3">
-                            @if(!empty($type->photos) && is_array($type->photos))
-                                <div class="flex gap-2">
-                                    @foreach($type->photos as $photo)
-                                        <img src="{{ asset('storage/' . $photo) }}" class="w-12 h-12 object-cover rounded border"
-                                            alt="Room Photo">
-                                    @endforeach
-                                </div>
-                            @else
-                                <span class="text-gray-400">-</span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-3 text-center">
-                            <form action="{{ route('room-types.destroy', $type->id) }}" method="POST" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button onclick="return confirm('Yakin ingin hapus?')"
-                                    class="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded-lg transition">
-                                    Hapus
-                                </button>
-                            </form>
-
-                            <button class="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded-lg transition"
-                                onclick="openEditModal({{ $type->id }}, '{{ $type->name_type }}', '{{ $type->facility }}', {{ $type->capacity }}, {{ $type->nightly_rate }})">
-                                Edit
-                            </button>
-
-
-                            @foreach ($roomTypes as $roomType)
-                               <a href="{{ route('rooms.index', ['roomTypeId' => $roomType->id]) }}"
-    class="px-3 py-1 text-sm text-black/50 font-medium bg-gray-500/20 hover:bg-gray-500 hover:text-white rounded-lg transition">
-    Room
-</a>
-
+                <tr class="border-t hover:bg-gray-50 transition">
+                    <td class="px-4 py-3">{{ $type->id }}</td>
+                    <td class="px-4 py-3">{{ $type->name_type }}</td>
+                    <td class="px-4 py-3">{{ $type->facility }}</td>
+                    <td class="px-4 py-3">{{ $type->capacity }}</td>
+                    <td class="px-4 py-3">{{ number_format($type->nightly_rate) }}</td>
+                    <td class="px-4 py-3">
+                        @if(!empty($type->photos) && is_array($type->photos))
+                        <div class="flex gap-2">
+                            @foreach($type->photos as $photo)
+                            <img src="{{ asset('storage/' . $photo) }}" class="w-12 h-12 object-cover rounded border"
+                                alt="Room Photo">
                             @endforeach
+                        </div>
+                        @else
+                        <span class="text-gray-400">-</span>
+                        @endif
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <form action="{{ route('room-types.destroy', $type->id) }}" method="POST" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button onclick="return confirm('Yakin ingin hapus?')"
+                                class="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded-lg transition">
+                                Hapus
+                            </button>
+                        </form>
 
-                        </td>
-                    </tr>
+                        <button class="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded-lg transition"
+                            onclick="openEditModal({{ $type->id }}, '{{ $type->name_type }}', '{{ $type->facility }}', {{ $type->capacity }}, {{ $type->nightly_rate }})">
+                            Edit
+                        </button>
+
+                        @if ($roomTypes->isNotEmpty())
+                        <a href="{{ route('rooms.index', ['roomTypeId' => $roomTypes->first()->id]) }}"
+                            class="px-3 py-1 text-sm text-black/50 font-medium bg-gray-500/20 hover:bg-gray-500 hover:text-white rounded-lg transition">
+                            Room
+                        </a>
+                        @endif
+
+                    </td>
+                </tr>
                 @empty
-                    <tr>
-                        <td colspan="7" class="text-center py-4 text-gray-400">Belum ada room type</td>
-                    </tr>
+                <tr>
+                    <td colspan="7" class="text-center py-4 text-gray-400">Belum ada room type</td>
+                </tr>
                 @endforelse
             </tbody>
         </table>
@@ -116,7 +114,7 @@
                     <button type="button" onclick="closeEditModal()"
                         class="mr-2 px-4 py-2 bg-gray-400 rounded text-white">Batal</button>
                     <button type="submit"
-                        class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 rounded text-white">Update</button>
+                        class="px-4 py-2 bg-gray-500 hover:bg-gray-600 rounded text-white">Update</button>
                 </div>
             </form>
         </div>

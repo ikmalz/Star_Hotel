@@ -54,9 +54,11 @@ class RoomTypeController extends Controller
             'facility' => 'nullable|string',
             'capacity' => 'required|integer',
             'nightly_rate' => 'required|numeric',
+            'photos.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $roomType = RoomType::findOrFail($id);
+
         $roomType->update([
             'name_type' => $request->name_type,
             'facility' => $request->facility,
@@ -65,14 +67,21 @@ class RoomTypeController extends Controller
         ]);
 
         if ($request->hasFile('photos')) {
+            $photoPaths = [];
+
             foreach ($request->file('photos') as $photo) {
-                $path = $photo->store('photos', 'public');
-                $roomType->photos()->create(['path' => $path]);
+                $path = $photo->store('room_photos', 'public');
+                $photoPaths[] = $path;
             }
+
+            $roomType->update(['photos' => $photoPaths]);
         }
+
+
 
         return redirect()->back()->with('success', 'Room Type updated!');
     }
+
 
 
     public function destroy($id)

@@ -103,16 +103,13 @@
         </div>
     </div>
 
-
-
-
     <div id="hotelModal" class="fixed inset-0 hidden items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-        <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
             <h3 class="text-lg font-semibold mb-4">Tambah Hotel</h3>
 
             <form id="hotelForm" action="{{ route('hotels.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <div class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Nama Hotel</label>
                         <input type="text" name="name_hotel"
@@ -137,7 +134,7 @@
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     </div>
 
-                    <div>
+                    <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700">Deskripsi</label>
                         <textarea name="description" rows="3"
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
@@ -145,7 +142,8 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Gambar</label>
-                        <input type="file" name="image" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <input type="file" name="image"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     </div>
 
                     <div>
@@ -171,7 +169,7 @@
 
 
     <div id="editHotelModal" class="fixed inset-0 hidden items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-        <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
             <h3 class="text-lg font-semibold mb-4">Edit Hotel</h3>
 
             <form id="editHotelForm" method="POST" enctype="multipart/form-data">
@@ -179,7 +177,7 @@
                 @method('PUT')
                 <input type="hidden" name="id" id="edit_id">
 
-                <div class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Nama Hotel</label>
                         <input type="text" name="name_hotel" id="edit_name_hotel"
@@ -204,7 +202,7 @@
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     </div>
 
-                    <div>
+                    <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700">Deskripsi</label>
                         <textarea name="description" id="edit_description" rows="3"
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>

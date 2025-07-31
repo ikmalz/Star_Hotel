@@ -3,10 +3,11 @@
 use App\Http\Controllers\HotelController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\RoomPhotoController;
 use App\Http\Controllers\RoomTypeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
-/*
+    /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
@@ -15,8 +16,7 @@ use App\Http\Controllers\UserController;
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "web" middleware group. Make something great!
 |
-*/
-;
+*/;
 
 Route::middleware('auth')->get('/users', [UserController::class, 'index'])->name('users.index');
 
@@ -35,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/room-types/{roomType}/rooms', [RoomController::class, 'store'])->name('rooms.store');
     Route::delete('/room-types/{id}', [RoomTypeController::class, 'destroy'])->name('room-types.destroy');
     Route::put('/room-types/{id}', [RoomTypeController::class, 'update'])->name('room-types.update');
+    Route::delete('/room-photos/delete/{photo}', [RoomPhotoController::class, 'deletePhoto'])->name('room-photos.delete');
 
 
     // Routes untuk Room Management
@@ -46,7 +47,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
 });
 
 require __DIR__ . '/auth.php';

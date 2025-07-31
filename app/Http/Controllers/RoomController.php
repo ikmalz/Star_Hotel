@@ -14,9 +14,10 @@ class RoomController extends Controller
     public function index($roomTypeId)
     {
         $roomType = RoomType::findOrFail($roomTypeId);
+        $hotel = $roomType->hotel;
         $rooms = Room::with(['roomType', 'photos'])->where('room_type_id', $roomTypeId)->get();
 
-        return view('rooms.list', compact('rooms', 'roomType'));
+        return view('rooms.list', compact('rooms', 'roomType', 'hotel'));
     }
 
     public function show($id)
@@ -24,8 +25,6 @@ class RoomController extends Controller
         $room = Room::with(['roomType.hotel', 'photos'])->findOrFail($id);
         return view('rooms.show', compact('room'));
     }
-
-    // Method create tidak diperlukan karena menggunakan modal
 
     public function store(Request $request, $roomTypeId)
     {
@@ -62,25 +61,36 @@ class RoomController extends Controller
         return redirect()->route('rooms.index', $roomTypeId)->with('success', 'Room berhasil ditambahkan.');
     }
 
-    // Method edit tidak diperlukan karena menggunakan modal
-
     public function update(Request $request, $id)
     {
         $room = Room::findOrFail($id);
 
         $request->validate([
-            'room_type_id' => 'exists:room_types,id',
-            'room_number' => 'string|unique:rooms,room_number,' . $room->id,
+            'room_number' => 'required|string|unique:rooms,room_number,' . $room->id,
             'floor' => 'nullable|integer',
             'status' => 'in:available,booked,occupied,maintenance',
             'notes' => 'nullable|string',
+            'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
         ]);
 
-        $room->update($request->all());
+        $room->update($request->only(['room_number', 'floor', 'status', 'notes']));
+
+        if ($request->hasFile('photos')) {
+            foreach ($request->file('photos') as $photo) {
+                $path = $photo->store('room_photos', 'public');
+                RoomPhoto::create([
+                    'room_id' => $room->id,
+                    'photo' => $path
+                ]);
+            }
+        }
+
+
 
         return redirect()->route('rooms.index', $room->room_type_id)
             ->with('success', 'Room berhasil diupdate.');
     }
+
 
     public function destroy($id)
     {
