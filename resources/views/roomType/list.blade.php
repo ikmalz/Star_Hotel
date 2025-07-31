@@ -80,10 +80,11 @@
 
 
                             @foreach ($roomTypes as $roomType)
-                                <a href="{{ route('rooms.index', ['roomType' => $roomType->id]) }}"
-                                    class="px-3 py-1 text-sm text-black/50 font-medium bg-gray-500/20 hover:bg-gray-500 hover:text-white rounded-lg transition">
-                                    Room
-                                </a>
+                               <a href="{{ route('rooms.index', ['roomTypeId' => $roomType->id]) }}"
+    class="px-3 py-1 text-sm text-black/50 font-medium bg-gray-500/20 hover:bg-gray-500 hover:text-white rounded-lg transition">
+    Room
+</a>
+
                             @endforeach
 
                         </td>
