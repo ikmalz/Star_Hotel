@@ -24,13 +24,13 @@ class RoomTypeController extends Controller
             'facility' => 'nullable|string',
             'capacity' => 'required|integer',
             'nightly_rate' => 'required|integer',
-            'photos.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
+            'photos.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $photoPaths = [];
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photo) {
-                $path = $photo->store('room_photos', 'public'); 
+                $path = $photo->store('room_photos', 'public');
                 $photoPaths[] = $path;
             }
         }
@@ -41,7 +41,7 @@ class RoomTypeController extends Controller
             'facility' => $request->facility,
             'capacity' => $request->capacity,
             'nightly_rate' => $request->nightly_rate,
-            'photos' => $photoPaths, 
+            'photos' => $photoPaths,
         ]);
 
         return redirect()->back()->with('success', 'Room type berhasil ditambahkan');
@@ -49,34 +49,31 @@ class RoomTypeController extends Controller
 
     public function update(Request $request, $id)
     {
-        $roomType = RoomType::findOrFail($id);
-
         $request->validate([
             'name_type' => 'required|string',
             'facility' => 'nullable|string',
             'capacity' => 'required|integer',
-            'nightly_rate' => 'required|integer',
-            'photos.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'nightly_rate' => 'required|numeric',
         ]);
 
-        $photoPaths = $roomType->photos ?? [];
-        if ($request->hasFile('photos')) {
-            foreach ($request->file('photos') as $photo) {
-                $path = $photo->store('room_photos', 'public');
-                $photoPaths[] = $path;
-            }
-        }
-
+        $roomType = RoomType::findOrFail($id);
         $roomType->update([
             'name_type' => $request->name_type,
             'facility' => $request->facility,
             'capacity' => $request->capacity,
             'nightly_rate' => $request->nightly_rate,
-            'photos' => $photoPaths,
         ]);
 
-        return redirect()->back()->with('success', 'Room type berhasil diperbarui');
+        if ($request->hasFile('photos')) {
+            foreach ($request->file('photos') as $photo) {
+                $path = $photo->store('photos', 'public');
+                $roomType->photos()->create(['path' => $path]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Room Type updated!');
     }
+
 
     public function destroy($id)
     {

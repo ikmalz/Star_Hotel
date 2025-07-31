@@ -12,9 +12,9 @@
         </div>
 
         @if(session('success'))
-        <div class="p-3 bg-green-200 text-green-800 rounded mb-3">
-            {{ session('success') }}
-        </div>
+            <div class="p-3 bg-green-200 text-green-800 rounded mb-3">
+                {{ session('success') }}
+            </div>
         @endif
 
         <form action="{{ route('room-types.store') }}" method="POST" enctype="multipart/form-data" class="mb-6">
@@ -30,6 +30,7 @@
             </div>
         </form>
 
+
         <table class="w-full text-sm border-separate border-spacing-0 rounded-xl overflow-hidden shadow">
             <thead>
                 <tr class="bg-gray-100 text-gray-700">
@@ -44,42 +45,103 @@
             </thead>
             <tbody>
                 @forelse($roomTypes as $type)
-                <tr class="border-t hover:bg-gray-50 transition">
-                    <td class="px-4 py-3">{{ $type->id }}</td>
-                    <td class="px-4 py-3">{{ $type->name_type }}</td>
-                    <td class="px-4 py-3">{{ $type->facility }}</td>
-                    <td class="px-4 py-3">{{ $type->capacity }}</td>
-                    <td class="px-4 py-3">{{ number_format($type->nightly_rate) }}</td>
-                    <td class="px-4 py-3">
-                        @if(!empty($type->photos) && is_array($type->photos))
-                        <div class="flex gap-2">
-                            @foreach($type->photos as $photo)
-                            <img src="{{ asset('storage/'.$photo) }}"
-                                class="w-12 h-12 object-cover rounded border"
-                                alt="Room Photo">
-                            @endforeach
-                        </div>
-                        @else
-                        <span class="text-gray-400">-</span>
-                        @endif
-                    </td>
-                    <td class="px-4 py-3 text-center">
-                        <form action="{{ route('room-types.destroy', $type->id) }}" method="POST" class="inline">
-                            @csrf
-                            @method('DELETE')
-                            <button onclick="return confirm('Yakin ingin hapus?')"
-                                class="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded-lg transition">
-                                Hapus
+                    <tr class="border-t hover:bg-gray-50 transition">
+                        <td class="px-4 py-3">{{ $type->id }}</td>
+                        <td class="px-4 py-3">{{ $type->name_type }}</td>
+                        <td class="px-4 py-3">{{ $type->facility }}</td>
+                        <td class="px-4 py-3">{{ $type->capacity }}</td>
+                        <td class="px-4 py-3">{{ number_format($type->nightly_rate) }}</td>
+                        <td class="px-4 py-3">
+                            @if(!empty($type->photos) && is_array($type->photos))
+                                <div class="flex gap-2">
+                                    @foreach($type->photos as $photo)
+                                        <img src="{{ asset('storage/' . $photo) }}" class="w-12 h-12 object-cover rounded border"
+                                            alt="Room Photo">
+                                    @endforeach
+                                </div>
+                            @else
+                                <span class="text-gray-400">-</span>
+                            @endif
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            <form action="{{ route('room-types.destroy', $type->id) }}" method="POST" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button onclick="return confirm('Yakin ingin hapus?')"
+                                    class="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded-lg transition">
+                                    Hapus
+                                </button>
+                            </form>
+
+                            <button class="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded-lg transition"
+                                onclick="openEditModal({{ $type->id }}, '{{ $type->name_type }}', '{{ $type->facility }}', {{ $type->capacity }}, {{ $type->nightly_rate }})">
+                                Edit
                             </button>
-                        </form>
-                    </td>
-                </tr>
+
+
+                            @foreach ($roomTypes as $roomType)
+                                <a href="{{ route('rooms.index', ['roomType' => $roomType->id]) }}"
+                                    class="px-3 py-1 text-sm text-black/50 font-medium bg-gray-500/20 hover:bg-gray-500 hover:text-white rounded-lg transition">
+                                    Room
+                                </a>
+                            @endforeach
+
+                        </td>
+                    </tr>
                 @empty
-                <tr>
-                    <td colspan="7" class="text-center py-4 text-gray-400">Belum ada room type</td>
-                </tr>
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-gray-400">Belum ada room type</td>
+                    </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
+
+    <div id="editModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center">
+        <div class="bg-white p-6 rounded-lg w-full max-w-xl relative">
+            <h2 class="text-lg font-bold mb-4">Edit Room Type</h2>
+            <form id="editForm" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="hotel_id" value="{{ $hotel->id }}">
+                <div class="grid grid-cols-1 gap-4">
+                    <input type="text" id="editNameType" name="name_type" class="border p-2 rounded" required>
+                    <input type="text" id="editFacility" name="facility" class="border p-2 rounded">
+                    <input type="number" id="editCapacity" name="capacity" class="border p-2 rounded" required>
+                    <input type="number" id="editNightlyRate" name="nightly_rate" class="border p-2 rounded" required>
+                    <input type="file" name="photos[]" multiple class="border p-2 rounded">
+                </div>
+                <div class="flex justify-end mt-4">
+                    <button type="button" onclick="closeEditModal()"
+                        class="mr-2 px-4 py-2 bg-gray-400 rounded text-white">Batal</button>
+                    <button type="submit"
+                        class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 rounded text-white">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        function openEditModal(id, name_type, facility, capacity, nightly_rate) {
+            const modal = document.getElementById('editModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            document.getElementById('editNameType').value = name_type;
+            document.getElementById('editFacility').value = facility;
+            document.getElementById('editCapacity').value = capacity;
+            document.getElementById('editNightlyRate').value = nightly_rate;
+
+            const form = document.getElementById('editForm');
+            form.action = `/room-types/${id}`;
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('editModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    </script>
+
 </x-app-layout>

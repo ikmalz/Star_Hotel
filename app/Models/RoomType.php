@@ -15,7 +15,7 @@ class RoomType extends Model
         'facility',
         'capacity',
         'nightly_rate',
-        'photos' 
+        'photos'
     ];
 
     protected $casts = [
@@ -25,5 +25,10 @@ class RoomType extends Model
     public function hotel()
     {
         return $this->belongsTo(Hotel::class);
+    }
+
+    public function rooms()
+    {
+        return $this->hasMany(Room::class);
     }
 }
