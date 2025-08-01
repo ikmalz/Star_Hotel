@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id(); 
             $table->foreignId('hotel_id')->constrained('hotels')->onDelete('cascade');
             $table->string('name_type');
-            $table->text('facility')->nullable();
             $table->integer('capacity');
             $table->json('photos')->nullable();
             $table->integer('nightly_rate');

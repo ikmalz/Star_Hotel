@@ -12,7 +12,6 @@ class RoomType extends Model
     protected $fillable = [
         'hotel_id',
         'name_type',
-        'facility',
         'capacity',
         'nightly_rate',
         'photos'
@@ -30,5 +29,10 @@ class RoomType extends Model
     public function rooms()
     {
         return $this->hasMany(Room::class);
+    }
+
+    public function facilities()
+    {
+        return $this->hasMany(RoomFacility::class);
     }
 }

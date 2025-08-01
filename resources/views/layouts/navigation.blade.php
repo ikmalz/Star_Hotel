@@ -55,6 +55,14 @@
                     Hotels
                 </a>
             </div>
+
+            <div x-show="openMaster" x-transition class="ml-5 mt-2 space-y-1">
+                <a href="{{ route('room_facilities.index') }}"
+                    class="block px-5 py-2 rounded-md transition duration-150 ease-in-out
+                        {{ request()->routeIs('room_facilities.*') ? 'bg-gray-200 font-semibold text-gray-800' : 'text-gray-600 hover:bg-gray-100' }}">
+                    Room Facilites
+                </a>
+            </div>
         </div>
     </div>
 

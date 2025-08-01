@@ -36,8 +36,8 @@
                     <tr class="bg-gray-100 text-gray-700">
                         <th class="px-4 py-3 text-left">ID</th>
                         <th class="px-4 py-3 text-left">Nama Tipe</th>
-                        <th class="px-4 py-3 text-left">Fasilitas</th>
                         <th class="px-4 py-3 text-left">Kapasitas</th>
+                        <th class="px-4 py-3 text-left">Fasilitas</th>
                         <th class="px-4 py-3 text-left">Harga/Malam</th>
                         <th class="px-4 py-3 text-left">Foto</th>
                         <th class="px-4 py-3 text-center">Aksi</th>
@@ -53,7 +53,7 @@
                             <div class="h-4 bg-gray-200 rounded w-24"></div>
                         </td>
                         <td class="px-4 py-3">
-                            <div class="h-4 bg-gray-200 rounded w-20"></div>
+                            <div class="h-4 bg-gray-200 rounded w-12"></div>
                         </td>
                         <td class="px-4 py-3">
                             <div class="h-4 bg-gray-200 rounded w-12"></div>
@@ -89,7 +89,17 @@
                     <tr class="border-t hover:bg-gray-50 transition">
                         <td class="px-4 py-3">{{ $type->id }}</td>
                         <td class="px-4 py-3">{{ $type->name_type }}</td>
-                        <td class="px-4 py-3">{{ $type->facility }}</td>
+                        <td class="px-4 py-3">
+                            @if($type->facilities->count())
+                            <ul class="list-disc pl-4">
+                                @foreach($type->facilities as $facility)
+                                <li>{{ $facility->facility_name }}</li>
+                                @endforeach
+                            </ul>
+                            @else
+                            <span class="text-gray-400">-</span>
+                            @endif
+                        </td>
                         <td class="px-4 py-3">{{ $type->capacity }}</td>
                         <td class="px-4 py-3">{{ number_format($type->nightly_rate) }}</td>
                         <td class="px-4 py-3">
@@ -145,7 +155,6 @@
                 <input type="hidden" name="hotel_id" value="{{ $hotel->id }}">
                 <div class="grid grid-cols-1 gap-4">
                     <input type="text" id="editNameType" name="name_type" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
-                    <input type="text" id="editFacility" name="facility" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     <input type="number" id="editCapacity" name="capacity" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
                     <input type="number" id="editNightlyRate" name="nightly_rate" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
                     <input type="file" name="photos[]" multiple class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -168,7 +177,6 @@
             modal.classList.add('flex');
 
             document.getElementById('editNameType').value = name_type;
-            document.getElementById('editFacility').value = facility;
             document.getElementById('editCapacity').value = capacity;
             document.getElementById('editNightlyRate').value = nightly_rate;
 

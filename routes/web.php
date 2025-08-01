@@ -3,6 +3,7 @@
 use App\Http\Controllers\HotelController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\RoomFacilityController;
 use App\Http\Controllers\RoomPhotoController;
 use App\Http\Controllers\RoomTypeController;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,8 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
     Route::resource('hotels', HotelController::class);
+
+    Route::resource('room_facilities', RoomFacilityController::class);
 
     Route::get('/hotels/{hotel}/room-types', [RoomTypeController::class, 'index'])->name('room-types.index');
     Route::post('/room-types', [RoomTypeController::class, 'store'])->name('room-types.store');

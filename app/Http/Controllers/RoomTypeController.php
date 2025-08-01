@@ -11,7 +11,7 @@ class RoomTypeController extends Controller
     public function index($hotelId)
     {
         $hotel = Hotel::findOrFail($hotelId);
-        $roomTypes = RoomType::where('hotel_id', $hotelId)->get();
+        $roomTypes = RoomType::with('facilities')->where('hotel_id', $hotelId)->get();
 
         return view('roomType.list', compact('hotel', 'roomTypes'));
     }
@@ -21,7 +21,6 @@ class RoomTypeController extends Controller
         $request->validate([
             'hotel_id' => 'required|exists:hotels,id',
             'name_type' => 'required|string',
-            'facility' => 'nullable|string',
             'capacity' => 'required|integer',
             'nightly_rate' => 'required|integer',
             'photos.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -38,7 +37,6 @@ class RoomTypeController extends Controller
         RoomType::create([
             'hotel_id' => $request->hotel_id,
             'name_type' => $request->name_type,
-            'facility' => $request->facility,
             'capacity' => $request->capacity,
             'nightly_rate' => $request->nightly_rate,
             'photos' => $photoPaths,
@@ -51,7 +49,6 @@ class RoomTypeController extends Controller
     {
         $request->validate([
             'name_type' => 'required|string',
-            'facility' => 'nullable|string',
             'capacity' => 'required|integer',
             'nightly_rate' => 'required|numeric',
             'photos.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -61,7 +58,6 @@ class RoomTypeController extends Controller
 
         $roomType->update([
             'name_type' => $request->name_type,
-            'facility' => $request->facility,
             'capacity' => $request->capacity,
             'nightly_rate' => $request->nightly_rate,
         ]);
