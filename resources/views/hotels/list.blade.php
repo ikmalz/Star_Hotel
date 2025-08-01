@@ -6,7 +6,7 @@
     </x-slot>
     <div id="flashMessage" class="hidden mb-4 p-4 rounded-lg shadow-sm"></div>
 
-    <div class="py-8 bg-gray-50 min-h-screen">
+    <div class="py-8 bg-gray-50 min-h-screen" x-data="{ loading: true }" x-init="setTimeout(() => loading = false, 1000)">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             <div class="bg-white p-6 shadow-lg sm:rounded-2xl border border-gray-100">
@@ -20,7 +20,22 @@
                 </div>
 
                 <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
-                    <table class="min-w-full text-sm text-gray-700">
+                    {{-- Skeleton Loading --}}
+                    <table class="min-w-full text-sm" x-show="loading">
+                        <tbody>
+                            @for($i = 0; $i < 5; $i++)
+                                <tr class="border-b border-gray-100 animate-pulse">
+                                @for($j = 0; $j < 9; $j++)
+                                    <td class="py-3 px-4">
+                                    <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                                    </td>
+                                    @endfor
+                                    </tr>
+                                    @endfor
+                        </tbody>
+                    </table>
+
+                    <table class="min-w-full text-sm text-gray-700" x-show="!loading" x-cloak>
                         <thead class="bg-gray-100 text-gray-600 uppercase text-xs font-semibold">
                             <tr>
                                 <th class="text-left py-3 px-4">ID</th>
@@ -95,13 +110,14 @@
 
                 {{-- pagination --}}
                 @if(method_exists($hotels, 'links'))
-                <div class="mt-6">
+                <div class="mt-6" x-show="!loading" x-cloak>
                     {{ $hotels->links() }}
                 </div>
                 @endif
             </div>
         </div>
     </div>
+
 
     <div id="hotelModal" class="fixed inset-0 hidden items-center justify-center bg-gray-800 bg-opacity-50 z-50">
         <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">

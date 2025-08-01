@@ -66,7 +66,7 @@ class RoomController extends Controller
         $room = Room::findOrFail($id);
 
         $request->validate([
-            'room_number' => 'required|string|unique:rooms,room_number,' . $room->id,
+            'room_number' => 'required|string|unique:rooms,room_number,' . $room->id . ',id',
             'floor' => 'nullable|integer',
             'status' => 'in:available,booked,occupied,maintenance',
             'notes' => 'nullable|string',

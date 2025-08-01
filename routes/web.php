@@ -37,8 +37,6 @@ Route::middleware('auth')->group(function () {
     Route::put('/room-types/{id}', [RoomTypeController::class, 'update'])->name('room-types.update');
     Route::delete('/room-photos/delete/{photo}', [RoomPhotoController::class, 'deletePhoto'])->name('room-photos.delete');
 
-
-    // Routes untuk Room Management
     Route::get('/room-types/{roomTypeId}/rooms', [RoomController::class, 'index'])->name('rooms.index');
     Route::get('/rooms/{id}', [RoomController::class, 'show'])->name('rooms.show');
     Route::put('/rooms/{id}', [RoomController::class, 'update'])->name('rooms.update');
