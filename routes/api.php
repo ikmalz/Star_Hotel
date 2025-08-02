@@ -6,7 +6,8 @@ use App\Http\Controllers\Api\Admin\RoomApiController;
 use App\Http\Controllers\Api\Admin\UploadPhotosApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Api\Admin\RoomFacilityApiController;
+use App\Http\Controllers\Api\RoomFacilityController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -17,6 +18,21 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+
+//ほてるしせつ
+Route::middleware('auth:sanctum')->prefix('user')->group(function () {
+    Route::get('/room-facilities', [RoomFacilityController::class, 'index']);
+    Route::get('/room-facilities/{room_type_id}', [RoomFacilityController::class, 'show']);
+});
+
+
+Route::prefix('admin')->group(function () {
+    Route::get('/room-facilities', [RoomFacilityApiController::class, 'index']);
+    Route::post('/room-facilities', [RoomFacilityApiController::class, 'store']);
+    Route::put('/room-facilities/{id}', [RoomFacilityApiController::class, 'update']);
+    Route::delete('/room-facilities/{id}', [RoomFacilityApiController::class, 'destroy']);
+});
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
