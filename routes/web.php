@@ -8,6 +8,7 @@ use App\Http\Controllers\RoomPhotoController;
 use App\Http\Controllers\RoomTypeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\BookingWebController;
     /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -48,6 +49,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/bookings', [BookingWebController::class, 'index'])->name('bookings.index');
+Route::patch('/bookings/{id}/status', [BookingWebController::class, 'updateStatus'])->name('bookings.updateStatus');
+
 });
 
 require __DIR__ . '/auth.php';

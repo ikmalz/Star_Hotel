@@ -1,7 +1,8 @@
 <nav
     x-data="{ 
         openAuth: {{ request()->routeIs('users.*') ? 'true' : 'false' }}, 
-        openMaster: {{ request()->routeIs('hotels.*') ? 'true' : 'false' }} 
+        openMaster: {{ request()->routeIs('hotels.*') || request()->routeIs('room_facilities.*') ? 'true' : 'false' }},
+        openTransaction: {{ request()->routeIs('bookings.*') ? 'true' : 'false' }}
     }"
     class="bg-white w-64 h-screen shadow-lg fixed flex flex-col">
 
@@ -17,6 +18,7 @@
             {{ __('Dashboard') }}
         </x-nav-link>
 
+        {{-- Auth --}}
         <div class="mt-3">
             <button
                 @click="openAuth = !openAuth"
@@ -37,6 +39,7 @@
             </div>
         </div>
 
+        {{-- Master Data --}}
         <div class="mt-3">
             <button
                 @click="openMaster = !openMaster"
@@ -54,13 +57,31 @@
                         {{ request()->routeIs('hotels.*') ? 'bg-gray-200 font-semibold text-gray-800' : 'text-gray-600 hover:bg-gray-100' }}">
                     Hotels
                 </a>
-            </div>
-
-            <div x-show="openMaster" x-transition class="ml-5 mt-2 space-y-1">
                 <a href="{{ route('room_facilities.index') }}"
                     class="block px-5 py-2 rounded-md transition duration-150 ease-in-out
                         {{ request()->routeIs('room_facilities.*') ? 'bg-gray-200 font-semibold text-gray-800' : 'text-gray-600 hover:bg-gray-100' }}">
-                    Room Facilites
+                    Room Facilities
+                </a>
+            </div>
+        </div>
+
+        {{-- Transaction Data --}}
+        <div class="mt-3">
+            <button
+                @click="openTransaction = !openTransaction"
+                class="w-full flex items-center justify-between px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out focus:outline-none">
+                <span>Transaction Data</span>
+                <svg class="w-4 h-4 transform transition-transform duration-200"
+                    :class="{ 'rotate-180': openTransaction }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <div x-show="openTransaction" x-transition class="ml-5 mt-2 space-y-1">
+                <a href="{{ route('bookings.index') }}"
+                    class="block px-5 py-2 rounded-md transition duration-150 ease-in-out
+                        {{ request()->routeIs('bookings.*') ? 'bg-gray-200 font-semibold text-gray-800' : 'text-gray-600 hover:bg-gray-100' }}">
+                    Bookings
                 </a>
             </div>
         </div>
