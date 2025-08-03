@@ -22,7 +22,7 @@ class RoomFacilityController extends Controller
      */
     public function create()
     {
-        $roomTypes = RoomType::all(); // ambil semua tipe kamar
+        $roomTypes = RoomType::all();
         return view('room_facilities.create', compact('roomTypes'));
     }
 

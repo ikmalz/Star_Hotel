@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class RoomFacilityApiController extends Controller
 {
-    // Tidak ada middleware auth di constructor, jadi tidak pakai token
 
     public function index()
     {

@@ -50,7 +50,6 @@ class AuthController extends Controller
             return response()->json(['message' => 'Email atau password salah'], 401);
         }
 
-        // Hanya izinkan login user, bukan admin
         if ($user->role !== 'user') {
             return response()->json(['message' => 'Login tidak diizinkan'], 403);
         }
@@ -63,6 +62,28 @@ class AuthController extends Controller
             'user'         => $user
         ]);
     }
+
+    public function loginAdmin(Request $request)
+    {
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json(['message' => 'Email atau password salah'], 401);
+        }
+
+        if ($user->role !== 'admin') {
+            return response()->json(['message' => 'Login hanya untuk admin'], 403);
+        }
+
+        $token = $user->createToken('admin_token')->plainTextToken;
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type'   => 'Bearer',
+            'user'         => $user
+        ]);
+    }
+
 
     public function logout(Request $request)
     {
