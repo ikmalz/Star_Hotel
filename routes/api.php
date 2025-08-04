@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\Admin\RoomTypeApiController;
 use App\Http\Controllers\Api\Admin\RoomFacilityApiController;
 use App\Http\Controllers\Api\Admin\UploadPhotosApiController;
 use App\Http\Controllers\Api\RoomFacilityController;
+use App\Http\Controllers\Api\Admin\PaymentAPIController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,7 +35,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/room-facilities/{room_type_id}', [RoomFacilityController::class, 'show']);
 
         Route::apiResource('bookings', BookingController::class);
+        Route::post('payments', [PaymentAPIController::class, 'store']);
+        Route::get('payments/{id}', [PaymentAPIController::class, 'show']);
     });
+
 
     Route::prefix('admin')->group(function () {
         Route::get('/room-facilities', [RoomFacilityApiController::class, 'index']);
@@ -49,5 +53,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/rooms/{id}/upload-photos', [UploadPhotosApiController::class, 'uploadPhotos']);
 
         Route::apiResource('bookings', BookingController::class);
+
+        Route::get('payments', [PaymentAPIController::class, 'index']);
+        Route::get('payments/{id}', [PaymentAPIController::class, 'show']);
+        Route::post('payments/{id}/verify', [PaymentAPIController::class, 'verify']);
+        Route::delete('payments/{id}', [PaymentAPIController::class, 'destroy']);
     });
 });

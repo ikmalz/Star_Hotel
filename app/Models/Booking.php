@@ -39,4 +39,14 @@ class Booking extends Model
     {
         return $this->belongsTo(RoomType::class);
     }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function latestPayment()
+    {
+        return $this->hasOne(Payment::class)->latestOfMany();
+    }
 }

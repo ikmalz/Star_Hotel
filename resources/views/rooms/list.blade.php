@@ -71,9 +71,11 @@
                     </td>
                     <td class="px-4 py-2">
                         <span class="px-2 py-1 text-xs rounded 
-                    ($room->status == 'booked' ? 'bg-yellow-200 text-yellow-800' :
-                        ($room->status == 'occupied' ? 'bg-red-200 text-red-800' :
-                            'bg-gray-200 text-gray-800')) }}">
+        {{ $room->status == 'booked' 
+            ? 'bg-yellow-200 text-yellow-800' 
+            : ($room->status == 'occupied' 
+                ? 'bg-red-200 text-red-800' 
+                : 'bg-gray-200 text-gray-800') }}">
                             {{ ucfirst($room->status) }}
                         </span>
                     </td>

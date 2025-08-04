@@ -9,6 +9,8 @@ use App\Http\Controllers\RoomTypeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BookingWebController;
+use App\Http\Controllers\PaymentWebController;
+
     /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -51,8 +53,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/bookings', [BookingWebController::class, 'index'])->name('bookings.index');
-Route::patch('/bookings/{id}/status', [BookingWebController::class, 'updateStatus'])->name('bookings.updateStatus');
+    Route::patch('/bookings/{id}/status', [BookingWebController::class, 'updateStatus'])->name('bookings.updateStatus');
 
+    Route::resource('bookings', BookingWebController::class);
+
+    Route::get('payments', [PaymentWebController::class, 'index'])->name('payments.index');
+    Route::get('payments/{id}', [PaymentWebController::class, 'show'])->name('payments.show');
+    Route::post('payments/{id}/verify', [PaymentWebController::class, 'verify'])->name('payments.verify');
+    Route::delete('payments/{id}', [PaymentWebController::class, 'destroy'])->name('payments.destroy');
 });
 
 require __DIR__ . '/auth.php';

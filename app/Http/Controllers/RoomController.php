@@ -6,39 +6,43 @@ use App\Models\Room;
 use App\Models\RoomPhoto;
 use App\Models\RoomType;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class RoomController extends Controller
 {
+    
     public function index($roomTypeId)
     {
         $roomType = RoomType::findOrFail($roomTypeId);
         $hotel = $roomType->hotel;
-        $rooms = Room::with(['roomType', 'photos'])->where('room_type_id', $roomTypeId)->get();
+        $rooms = Room::with(['roomType', 'photos'])
+            ->where('room_type_id', $roomTypeId)
+            ->get();
 
         return view('rooms.list', compact('rooms', 'roomType', 'hotel'));
     }
 
+   
     public function show($id)
     {
         $room = Room::with(['roomType.hotel', 'photos'])->findOrFail($id);
         return view('rooms.show', compact('room'));
     }
 
+    
     public function store(Request $request, $roomTypeId)
     {
-        $validator = Validator::make($request->all(), [
-            'room_number' => 'required|string|max:255',
+        $request->validate([
+            'room_number' => [
+                'required', 'string', 'max:255',
+                Rule::unique('rooms', 'room_number')->where(fn($q) => $q->where('room_type_id', $roomTypeId)),
+            ],
             'floor' => 'nullable|integer',
             'status' => 'required|in:available,booked,occupied,maintenance',
             'notes' => 'nullable|string',
             'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
         ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
 
         $room = Room::create([
             'room_type_id' => $roomTypeId,
@@ -58,7 +62,8 @@ class RoomController extends Controller
             }
         }
 
-        return redirect()->route('rooms.index', $roomTypeId)->with('success', 'Room berhasil ditambahkan.');
+        return redirect()->route('rooms.index', $roomTypeId)
+            ->with('success', 'Room berhasil ditambahkan.');
     }
 
     public function update(Request $request, $id)
@@ -66,7 +71,12 @@ class RoomController extends Controller
         $room = Room::findOrFail($id);
 
         $request->validate([
-            'room_number' => 'required|string|unique:rooms,room_number,' . $room->id . ',id',
+            'room_number' => [
+                'required', 'string', 'max:255',
+                Rule::unique('rooms', 'room_number')
+                    ->ignore($room->id)
+                    ->where(fn($q) => $q->where('room_type_id', $room->room_type_id)),
+            ],
             'floor' => 'nullable|integer',
             'status' => 'in:available,booked,occupied,maintenance',
             'notes' => 'nullable|string',
@@ -85,17 +95,20 @@ class RoomController extends Controller
             }
         }
 
-
-
         return redirect()->route('rooms.index', $room->room_type_id)
             ->with('success', 'Room berhasil diupdate.');
     }
 
-
     public function destroy($id)
     {
-        $room = Room::findOrFail($id);
+        $room = Room::with('photos')->findOrFail($id);
         $roomTypeId = $room->room_type_id;
+
+        foreach ($room->photos as $photo) {
+            Storage::disk('public')->delete($photo->photo);
+            $photo->delete();
+        }
+
         $room->delete();
 
         return redirect()->route('rooms.index', $roomTypeId)

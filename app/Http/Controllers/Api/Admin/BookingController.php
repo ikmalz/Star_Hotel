@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\BookingResource;
 use App\Models\Booking;
 use App\Models\Room;
 use Illuminate\Http\Request;
@@ -12,23 +13,37 @@ class BookingController extends Controller
 {
     public function index()
     {
-        return Booking::with(['user', 'room', 'roomType'])->latest()->get();
+        $bookings = Booking::with(['user', 'roomType', 'payments'])->latest()->get();
+        return BookingResource::collection($bookings);
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
             'room_type_id' => 'required|exists:room_types,id',
             'checkin_at' => 'required|date',
             'checkout_at' => 'required|date|after:checkin_at',
             'price_total' => 'required|integer',
         ]);
 
+        $userId = $request->user()->id;
+
+        $existingBooking = Booking::where('user_id', $userId)
+            ->whereIn('status_booking', ['pending', 'paid'])
+            ->first();
+
+        if ($existingBooking) {
+            return response()->json([
+                'message' => 'Anda masih memiliki booking yang belum diselesaikan.',
+                'booking_id' => $existingBooking->id,
+                'status_booking' => $existingBooking->status_booking
+            ], 422);
+        }
+
         $code = 'BK-' . strtoupper(Str::random(6));
 
         $booking = Booking::create([
-            'user_id' => $request->user_id,
+            'user_id' => $userId,
             'room_type_id' => $request->room_type_id,
             'room_id' => null,
             'checkin_at' => $request->checkin_at,
@@ -38,16 +53,15 @@ class BookingController extends Controller
             'price_total' => $request->price_total,
         ]);
 
-        return response()->json([
-            'message' => 'Booking berhasil dibuat',
-            'data' => $booking
-        ], 201);
+        return (new BookingResource($booking->load('roomType')))
+            ->additional(['message' => 'Booking berhasil dibuat, silakan lakukan pembayaran.']);
     }
+
 
     public function show($id)
     {
-        $booking = Booking::with(['user', 'room', 'roomType'])->findOrFail($id);
-        return response()->json($booking);
+        $booking = Booking::with(['user', 'roomType', 'payments'])->findOrFail($id);
+        return new BookingResource($booking);
     }
 
     public function update(Request $request, $id)
@@ -60,6 +74,9 @@ class BookingController extends Controller
             'checkin_at' => 'nullable|date',
             'checkout_at' => 'nullable|date|after:checkin_at',
         ]);
+
+        $oldStatus = $booking->status_booking;
+        $oldRoomId = $booking->room_id;
 
         if ($request->filled('room_id')) {
             $room = Room::find($request->room_id);
@@ -77,6 +94,10 @@ class BookingController extends Controller
             }
 
             $room->update(['status' => 'booked']);
+
+            if ($oldRoomId && $oldRoomId != $room->id) {
+                Room::where('id', $oldRoomId)->update(['status' => 'available']);
+            }
         }
 
         $booking->update($request->only([
@@ -86,11 +107,20 @@ class BookingController extends Controller
             'checkout_at'
         ]));
 
+        if ($request->status_booking === 'checked_out' && $booking->room_id) {
+            Room::where('id', $booking->room_id)->update(['status' => 'available']);
+        }
+
+        if ($request->status_booking === 'canceled' && $booking->room_id) {
+            Room::where('id', $booking->room_id)->update(['status' => 'available']);
+        }
+
         return response()->json([
             'message' => 'Booking berhasil diupdate',
-            'data' => $booking->load(['user', 'room'])
-        ]);
+            'data' => $booking->load(['user', 'room', 'roomType', 'payments'])
+        ], 201);
     }
+
 
     public function destroy($id)
     {
