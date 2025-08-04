@@ -40,10 +40,12 @@ class Booking extends Model
         return $this->belongsTo(RoomType::class);
     }
 
-    public function payments()
+    // BENAR
+    public function payment()
     {
-        return $this->hasMany(Payment::class);
+        return $this->hasOne(Payment::class);
     }
+
 
     public function latestPayment()
     {

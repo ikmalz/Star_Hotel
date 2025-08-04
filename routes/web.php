@@ -11,7 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\BookingWebController;
 use App\Http\Controllers\PaymentWebController;
 
-    /*
+/*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
@@ -20,7 +20,8 @@ use App\Http\Controllers\PaymentWebController;
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "web" middleware group. Make something great!
 |
-*/;
+*/
+;
 
 Route::middleware('auth')->get('/users', [UserController::class, 'index'])->name('users.index');
 
@@ -61,6 +62,9 @@ Route::middleware('auth')->group(function () {
     Route::get('payments/{id}', [PaymentWebController::class, 'show'])->name('payments.show');
     Route::post('payments/{id}/verify', [PaymentWebController::class, 'verify'])->name('payments.verify');
     Route::delete('payments/{id}', [PaymentWebController::class, 'destroy'])->name('payments.destroy');
+
+    Route::get('/admin/payments/{id}', [PaymentWebController::class, 'show'])->name('payments.show');
+    Route::patch('/admin/payments/{id}/verify', [PaymentWebController::class, 'verify'])->name('payments.verify');
 });
 
 require __DIR__ . '/auth.php';

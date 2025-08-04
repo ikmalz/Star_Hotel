@@ -20,6 +20,7 @@
                         <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Room</th>
                         <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Room Type</th>
                         <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Status</th>
+                        <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Payment</th>
                         <th class="px-4 py-2 text-center text-sm font-semibold text-gray-700">Action</th>
                     </tr>
                 </thead>
@@ -44,6 +45,15 @@
                                     {{ ucfirst(str_replace('_',' ',$booking->status_booking)) }}
                                 </span>
                             </td>
+                            <td class="px-4 py-2 text-sm text-gray-800">
+                                @if ($booking->payment)
+                                    <a href="{{ route('payments.show', $booking->payment->id) }}"
+                                        class="ml-2 px-3 py-1 bg-gray-500 text-white text-xs rounded hover:bg-gray-600 transition">
+                                        Payment
+                                    </a>
+                                @endif
+
+                            </td>
                             <td class="px-4 py-3 text-center">
                                 @if (!in_array($booking->status_booking, ['checked_out','canceled']))
                                     <button onclick="openModal('{{ $booking->id }}')"
@@ -56,7 +66,6 @@
                             </td>
                         </tr>
 
-                        {{-- Modal untuk Update Booking --}}
                         <div id="modal-{{ $booking->id }}" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                             <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
                                 <h3 class="text-lg font-semibold mb-4">Update Booking - {{ $booking->code_booking }}</h3>
@@ -65,7 +74,6 @@
                                     @csrf
                                     @method('PATCH')
 
-                                    {{-- Room Select hanya muncul kalau status paid --}}
                                     @if ($booking->status_booking === 'paid')
                                         <div>
                                             <label class="block text-sm font-medium mb-1">Pilih Room</label>

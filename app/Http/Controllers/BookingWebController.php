@@ -10,13 +10,13 @@ class BookingWebController extends Controller
 {
     public function index()
     {
-        $bookings = Booking::with(['user', 'room', 'roomType', 'payments'])->latest()->get();
+        $bookings = Booking::with(['user', 'room', 'roomType', 'payment'])->latest()->get();
         return view('admin.bookings.index', compact('bookings'));
     }
 
     public function show($id)
     {
-        $booking = Booking::with(['user', 'room', 'roomType', 'payments'])->findOrFail($id);
+        $booking = Booking::with(['user', 'room', 'roomType', 'payment'])->findOrFail($id);
         return view('admin.bookings.show', compact('booking'));
     }
 
@@ -24,8 +24,8 @@ class BookingWebController extends Controller
     {
         $booking = Booking::with(['roomType', 'room'])->findOrFail($id);
         $availableRooms = Room::where('room_type_id', $booking->room_type_id)
-                              ->where('status', 'available')
-                              ->get();
+            ->where('status', 'available')
+            ->get();
         return view('admin.bookings.edit', compact('booking', 'availableRooms'));
     }
 

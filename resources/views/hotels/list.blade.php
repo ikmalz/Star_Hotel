@@ -20,7 +20,6 @@
                 </div>
 
                 <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
-                    {{-- Skeleton Loading --}}
                     <table class="min-w-full text-sm" x-show="loading">
                         <tbody>
                             @for($i = 0; $i < 5; $i++)
