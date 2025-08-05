@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Room Types - {{ $hotel->name_hotel }} - {{ $hotel->city }}
+            {{ $hotel->name_hotel }} - Room Types - {{ $hotel->city->name }}
         </h2>
     </x-slot>
 
@@ -18,11 +18,10 @@
         </div>
         @endif
 
-        <form action="{{ route('room-types.store') }}" method="POST" enctype="multipart/form-data" class="mb-6 grid grid-cols-6 gap-4">
+        <form action="{{ route('room-types.store') }}" method="POST" enctype="multipart/form-data" class="mb-6 grid grid-cols-5 gap-4">
             @csrf
             <input type="hidden" name="hotel_id" value="{{ $hotel->id }}">
             <input type="text" name="name_type" placeholder="Nama Tipe" class="border p-2 rounded" required>
-            <input type="text" name="facility" placeholder="Fasilitas" class="border p-2 rounded">
             <input type="number" name="capacity" placeholder="Kapasitas" class="border p-2 rounded" required>
             <input type="number" name="nightly_rate" placeholder="Harga/Malam" class="border p-2 rounded" required>
             <input type="file" name="photos[]" multiple class="border p-2 rounded">
@@ -36,8 +35,8 @@
                     <tr class="bg-gray-100 text-gray-700">
                         <th class="px-4 py-3 text-left">ID</th>
                         <th class="px-4 py-3 text-left">Nama Tipe</th>
-                        <th class="px-4 py-3 text-left">Kapasitas</th>
                         <th class="px-4 py-3 text-left">Fasilitas</th>
+                        <th class="px-4 py-3 text-left">Kapasitas</th>
                         <th class="px-4 py-3 text-left">Harga/Malam</th>
                         <th class="px-4 py-3 text-left">Foto</th>
                         <th class="px-4 py-3 text-center">Aksi</th>
@@ -53,7 +52,7 @@
                             <div class="h-4 bg-gray-200 rounded w-24"></div>
                         </td>
                         <td class="px-4 py-3">
-                            <div class="h-4 bg-gray-200 rounded w-12"></div>
+                            <div class="h-4 bg-gray-200 rounded w-24"></div>
                         </td>
                         <td class="px-4 py-3">
                             <div class="h-4 bg-gray-200 rounded w-12"></div>
@@ -89,7 +88,7 @@
                     <tr class="border-t hover:bg-gray-50 transition">
                         <td class="px-4 py-3">{{ $type->id }}</td>
                         <td class="px-4 py-3">{{ $type->name_type }}</td>
-                        <td class="px-4 py-3">
+                         <td class="px-4 py-3">
                             @if($type->facilities->count())
                             <ul class="list-disc pl-4">
                                 @foreach($type->facilities as $facility)

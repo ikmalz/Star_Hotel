@@ -57,7 +57,7 @@
                             <td class="px-4 py-3 text-center">
                                 @if (!in_array($booking->status_booking, ['checked_out','canceled']))
                                     <button onclick="openModal('{{ $booking->id }}')"
-                                        class="px-3 py-1 bg-indigo-500 text-white text-xs rounded hover:bg-indigo-600 transition">
+                                        class="px-3 py-1 bg-gray-500 text-white text-xs rounded hover:bg-gray-600 transition">
                                         Update
                                     </button>
                                 @else
@@ -109,7 +109,7 @@
                                             Batal
                                         </button>
                                         <button type="submit"
-                                            class="px-3 py-1 bg-indigo-500 text-white rounded hover:bg-indigo-600">
+                                            class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600">
                                             Simpan
                                         </button>
                                     </div>

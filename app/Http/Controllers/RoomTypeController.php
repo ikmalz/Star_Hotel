@@ -78,8 +78,6 @@ class RoomTypeController extends Controller
         return redirect()->back()->with('success', 'Room Type updated!');
     }
 
-
-
     public function destroy($id)
     {
         $roomType = RoomType::findOrFail($id);

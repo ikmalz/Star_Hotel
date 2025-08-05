@@ -9,21 +9,19 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('hotels', function (Blueprint $table) {
             $table->id();
-            $table->string('name_hotel');
-            $table->string('address');           
-            $table->string('city');              
-            $table->string('province');         
-            $table->text('description')->nullable(); 
-            $table->string('image')->nullable(); 
-            $table->string('customer_service_phone')->nullable(); 
+            $table->string('name_hotel'); 
+            $table->foreignId('city_id')->constrained('cities')->onDelete('cascade');
+            $table->string('address');
+            $table->text('description')->nullable();
+            $table->string('image')->nullable();
+            $table->string('customer_service_phone')->nullable();
             $table->timestamps();
         });
     }
-
 
     /**
      * Reverse the migrations.

@@ -53,7 +53,7 @@
                 <tr class="border-t">
                     <td class="px-4 py-2">{{ $room->id }}</td>
                     <td class="px-4 py-2">{{ $room->room_number }}</td>
-                    <td class="px-4 py-2">{{ $room->floor ?? '-' }}</td>
+                    <td class="px-4 py-2">{{ $room->floor->floor_number ?? '-' }}</td>
                     <td class="px-4 py-2 border-b border-gray-100">
                         @if($room->photos && count($room->photos) > 0)
                         <div class="flex items-center space-x-2 cursor-pointer"
@@ -83,7 +83,7 @@
                     <td class="px-4 py-2 text-center">
                         <div class="flex justify-center space-x-2">
                             <button
-                                onclick='openEditModal({{ $room->id }}, @json($room->room_number), @json($room->floor), @json($room->status), @json($room->notes), @json($room->photos->map(function($p){ return ["id" => $p->id, "photo" => $p->photo]; })->values()) )'
+                                onclick='openEditModal({{ $room->id }}, @json($room->room_number), @json($room->floor_id ?? null), @json($room->status), @json($room->notes), @json($room->photos->map(function($p){ return ["id" => $p->id, "photo" => $p->photo]; })->values()) )'
                                 class="bg-gray-500 text-white px-3 py-1 rounded">
                                 Edit
                             </button>
@@ -143,7 +143,11 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Lantai</label>
-                        <input type="number" name="floor" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <select name="floor_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                            @foreach($roomType->floors as $floor)
+                            <option value="{{ $floor->id }}">Lantai {{ $floor->floor_number }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div>
@@ -190,8 +194,13 @@
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700">Lantai</label>
-                    <input type="text" name="floor" id="floor" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    <select name="floor_id" id="floor_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                        @foreach($roomType->floors as $floor)
+                        <option value="{{ $floor->id }}">Lantai {{ $floor->floor_number }}</option>
+                        @endforeach
+                    </select>
                 </div>
+
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700">Status</label>
@@ -282,9 +291,9 @@
             document.getElementById('photoModal').classList.add('hidden');
         }
 
-        function openEditModal(id, room_number, floor, status, notes, photos) {
+        function openEditModal(id, room_number, floor_id, status, notes, photos) {
             document.getElementById('room_number').value = room_number;
-            document.getElementById('floor').value = floor ?? '';
+            document.getElementById('floor_id').value = floor_id ?? '';
             document.getElementById('status').value = status;
             document.getElementById('notes').value = notes ?? '';
 
@@ -325,6 +334,7 @@
 
             document.getElementById('roomModal').classList.remove('hidden');
         }
+
 
         function closeModal(modalId) {
             document.getElementById(modalId).classList.add('hidden');

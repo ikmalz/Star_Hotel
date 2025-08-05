@@ -41,7 +41,7 @@
                                 <th class="text-left py-3 px-4">Nama Hotel</th>
                                 <th class="text-left py-3 px-4">Alamat</th>
                                 <th class="text-left py-3 px-4">Kota</th>
-                                <th class="text-left py-3 px-4">Provinsi</th>
+                                <th class="text-left py-3 px-4">Province</th>
                                 <th class="text-left py-3 px-4">Deskripsi</th>
                                 <th class="text-left py-3 px-4">Gambar</th>
                                 <th class="text-left py-3 px-4">CS Phone</th>
@@ -54,8 +54,8 @@
                                 <td class="py-3 px-4">{{ $hotel->id }}</td>
                                 <td class="py-3 px-4 font-medium">{{ $hotel->name_hotel }}</td>
                                 <td class="py-3 px-4">{{ $hotel->address }}</td>
-                                <td class="py-3 px-4">{{ $hotel->city }}</td>
-                                <td class="py-3 px-4">{{ $hotel->province }}</td>
+                                <td class="py-3 px-4">{{ $hotel->city->name ?? '-' }}</td>
+                                <td class="py-3 px-4">{{ $hotel->city->province->name ?? '-' }}</td>
                                 <td class="py-3 px-4">{{ Str::limit($hotel->description, 60) }}</td>
                                 <td class="py-3 px-4">
                                     @if($hotel->image)
@@ -74,8 +74,7 @@
                                             data-id="{{ $hotel->id }}"
                                             data-name="{{ $hotel->name_hotel }}"
                                             data-address="{{ $hotel->address }}"
-                                            data-city="{{ $hotel->city }}"
-                                            data-province="{{ $hotel->province }}"
+                                            data-city_id="{{ $hotel->city_id }}"
                                             data-description="{{ $hotel->description }}"
                                             data-image="{{ $hotel->image }}"
                                             data-cs="{{ $hotel->customer_service_phone }}">
@@ -137,16 +136,15 @@
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     </div>
 
-                    <div>
+                    <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700">Kota</label>
-                        <input type="text" name="city"
+                        <select name="city_id" id="citySelect"
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Provinsi</label>
-                        <input type="text" name="province"
-                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <option value="">-- Pilih Kota --</option>
+                            @foreach($cities as $city)
+                            <option value="{{ $city->id }}">{{ $city->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="md:col-span-2">
@@ -205,16 +203,15 @@
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     </div>
 
-                    <div>
+                    <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700">Kota</label>
-                        <input type="text" name="city" id="edit_city"
+                        <select name="city_id" id="edit_citySelect"
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Provinsi</label>
-                        <input type="text" name="province" id="edit_province"
-                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <option value="">-- Pilih Kota --</option>
+                            @foreach($cities as $city)
+                            <option value="{{ $city->id }}">{{ $city->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="md:col-span-2">
@@ -341,8 +338,7 @@
                     document.getElementById('edit_id').value = currentEditId;
                     document.getElementById('edit_name_hotel').value = btn.dataset.name || '';
                     document.getElementById('edit_address').value = btn.dataset.address || '';
-                    document.getElementById('edit_city').value = btn.dataset.city || '';
-                    document.getElementById('edit_province').value = btn.dataset.province || '';
+                    document.getElementById('edit_citySelect').value = btn.dataset.city_id || '';
                     document.getElementById('edit_description').value = btn.dataset.description || '';
                     document.getElementById('edit_image').value = '';
                     document.getElementById('edit_cs').value = btn.dataset.cs || '';

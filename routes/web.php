@@ -9,9 +9,12 @@ use App\Http\Controllers\RoomTypeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BookingWebController;
+use App\Http\Controllers\CityController;
+use App\Http\Controllers\FloorController;
 use App\Http\Controllers\PaymentWebController;
+use App\Http\Controllers\ProvinceController;
 
-/*
+    /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
@@ -20,8 +23,7 @@ use App\Http\Controllers\PaymentWebController;
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "web" middleware group. Make something great!
 |
-*/
-;
+*/;
 
 Route::middleware('auth')->get('/users', [UserController::class, 'index'])->name('users.index');
 
@@ -65,6 +67,15 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/admin/payments/{id}', [PaymentWebController::class, 'show'])->name('payments.show');
     Route::patch('/admin/payments/{id}/verify', [PaymentWebController::class, 'verify'])->name('payments.verify');
+
+    Route::resource('provinces', ProvinceController::class);
+    Route::resource('cities', CityController::class);
+
+    Route::prefix('floors')->group(function () {
+        Route::get('/{roomType}', [FloorController::class, 'index'])->name('floors.index');
+        Route::post('/{roomType}', [FloorController::class, 'store'])->name('floors.store');
+        Route::delete('/delete/{id}', [FloorController::class, 'destroy'])->name('floors.destroy');
+    });
 });
 
 require __DIR__ . '/auth.php';

@@ -10,16 +10,16 @@ class HotelApiController extends Controller
 {
     public function index()
     {
-        return response()->json(Hotel::all());
+        $hotels = Hotel::with('city.province')->get();
+        return response()->json($hotels);
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'name_hotel' => 'required|string|max:255',
+            'city_id' => 'required|exists:cities,id',
             'address' => 'required|string|max:255',
-            'city' => 'required|string|max:100',
-            'province' => 'required|string|max:100',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'customer_service_phone' => 'nullable|string|max:20',
@@ -27,9 +27,8 @@ class HotelApiController extends Controller
 
         $data = $request->only([
             'name_hotel',
+            'city_id',
             'address',
-            'city',
-            'province',
             'description',
             'customer_service_phone'
         ]);
@@ -42,14 +41,13 @@ class HotelApiController extends Controller
 
         return response()->json([
             'message' => 'Hotel created successfully',
-            'data' => $hotel
+            'data' => $hotel->load('city.province')
         ], 201);
     }
 
-
     public function show($id)
     {
-        $hotel = Hotel::findOrFail($id);
+        $hotel = Hotel::with('city.province')->findOrFail($id);
         return response()->json($hotel);
     }
 
@@ -59,25 +57,34 @@ class HotelApiController extends Controller
 
         $request->validate([
             'name_hotel' => 'required|string|max:255',
+            'city_id' => 'required|exists:cities,id',
             'address' => 'required|string|max:255',
-            'city' => 'required|string|max:100',
-            'province' => 'required|string|max:100',
             'description' => 'nullable|string',
-            'image' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'customer_service_phone' => 'nullable|string|max:20',
         ]);
 
-        $hotel->update($request->all());
+        $data = $request->only([
+            'name_hotel',
+            'city_id',
+            'address',
+            'description',
+            'customer_service_phone'
+        ]);
+
+        $hotel->update($data);
 
         return response()->json([
             'message' => 'Hotel updated successfully',
-            'data' => $hotel
+            'data' => $hotel->load('city.province')
         ]);
     }
 
     public function destroy($id)
     {
-        Hotel::destroy($id);
+        $hotel = Hotel::findOrFail($id);
+
+        $hotel->delete();
 
         return response()->json([
             'message' => 'Hotel deleted successfully'

@@ -12,11 +12,10 @@ class Hotel extends Model
     protected $fillable = [
         'name_hotel',
         'address',
-        'city',
-        'province',
+        'city_id',
         'description',
         'image',
-        'customer_service_phone'
+        'customer_service_phone',
     ];
 
     public function roomTypes()
@@ -24,12 +23,25 @@ class Hotel extends Model
         return $this->hasMany(RoomType::class);
     }
 
+    public function floors()
+    {
+        return $this->hasMany(Floor::class);
+    }
 
-    // public function ratings() {
-    //     return $this->hasMany(Rating::class);
-    // }
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
 
-    // public function comments() {
-    //     return $this->hasMany(Comment::class);
-    // }
+    public function province()
+    {
+        return $this->hasOneThrough(
+            Province::class,
+            City::class,
+            'id',        
+            'id',        
+            'city_id',   
+            'province_id' 
+        );
+    }
 }

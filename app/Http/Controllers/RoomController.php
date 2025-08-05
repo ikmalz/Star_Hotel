@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
 
 class RoomController extends Controller
 {
-    
+
     public function index($roomTypeId)
     {
         $roomType = RoomType::findOrFail($roomTypeId);
@@ -23,22 +23,24 @@ class RoomController extends Controller
         return view('rooms.list', compact('rooms', 'roomType', 'hotel'));
     }
 
-   
+
     public function show($id)
     {
         $room = Room::with(['roomType.hotel', 'photos'])->findOrFail($id);
         return view('rooms.show', compact('room'));
     }
 
-    
+
     public function store(Request $request, $roomTypeId)
     {
         $request->validate([
             'room_number' => [
-                'required', 'string', 'max:255',
+                'required',
+                'string',
+                'max:255',
                 Rule::unique('rooms', 'room_number')->where(fn($q) => $q->where('room_type_id', $roomTypeId)),
             ],
-            'floor' => 'nullable|integer',
+            'floor_id' => 'nullable|integer',
             'status' => 'required|in:available,booked,occupied,maintenance',
             'notes' => 'nullable|string',
             'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
@@ -47,7 +49,7 @@ class RoomController extends Controller
         $room = Room::create([
             'room_type_id' => $roomTypeId,
             'room_number' => $request->room_number,
-            'floor' => $request->floor,
+            'floor_id' => $request->floor_id,
             'status' => $request->status,
             'notes' => $request->notes,
         ]);
@@ -72,18 +74,20 @@ class RoomController extends Controller
 
         $request->validate([
             'room_number' => [
-                'required', 'string', 'max:255',
+                'required',
+                'string',
+                'max:255',
                 Rule::unique('rooms', 'room_number')
                     ->ignore($room->id)
                     ->where(fn($q) => $q->where('room_type_id', $room->room_type_id)),
             ],
-            'floor' => 'nullable|integer',
+            'floor_id' => 'nullable|integer',
             'status' => 'in:available,booked,occupied,maintenance',
             'notes' => 'nullable|string',
             'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
         ]);
 
-        $room->update($request->only(['room_number', 'floor', 'status', 'notes']));
+        $room->update($request->only(['room_number', 'floor_id', 'status', 'notes']));
 
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photo) {

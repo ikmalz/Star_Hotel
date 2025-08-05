@@ -5,46 +5,48 @@
         </h2>
     </x-slot>
 
-    <div class="max-w-6xl mx-auto py-6">
+    <div class="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         @if(session('success'))
-        <div class="mb-4 p-4 bg-green-100 border border-green-300 text-green-800 rounded-lg">
+        <div class="mb-4 p-4 bg-green-50 border border-green-200 text-green-700 rounded-xl shadow-sm">
             {{ session('success') }}
         </div>
         @endif
 
-        <div class="flex justify-between items-center mb-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
             <h1 class="text-2xl font-bold text-gray-700">Daftar Fasilitas Kamar</h1>
-            <button onclick="openCreateModal()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow">
+            <button onclick="openCreateModal()"
+                class="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-xl shadow-md transition-all duration-200">
                 + Tambah Fasilitas
             </button>
         </div>
 
-        <div class="overflow-x-auto bg-white rounded-lg shadow">
-            <table class="w-full border-collapse">
-                <thead class="bg-gray-100 border-b">
-                    <tr class="text-left text-gray-700">
-                        <th class="px-4 py-3">#</th>
-                        <th class="px-4 py-3">Tipe Kamar</th>
-                        <th class="px-4 py-3">Fasilitas</th>
-                        <th class="px-4 py-3 text-center">Aksi</th>
+        <div class="overflow-x-auto bg-white rounded-xl shadow-lg border border-gray-100">
+            <table class="w-full border-collapse min-w-[600px]">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr class="text-left text-gray-600 text-sm">
+                        <th class="px-4 py-3 font-medium">#</th>
+                        <th class="px-4 py-3 font-medium">Tipe Kamar</th>
+                        <th class="px-4 py-3 font-medium">Fasilitas</th>
+                        <th class="px-4 py-3 text-center font-medium">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="text-gray-700 text-sm">
                     @forelse($facilities as $facility)
-                    <tr class="border-b hover:bg-gray-50 transition">
+                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200">
                         <td class="px-4 py-3">{{ $facility->id }}</td>
                         <td class="px-4 py-3">{{ $facility->roomType->name_type }}</td>
                         <td class="px-4 py-3">{{ $facility->facility_name }}</td>
                         <td class="px-4 py-3 flex justify-center gap-2">
                             <button
                                 onclick="openEditModal({{ $facility->id }}, '{{ $facility->roomType->id }}', '{{ $facility->facility_name }}')"
-                                class="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded shadow text-sm">
+                                class="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded-lg shadow-sm text-xs transition-all">
                                 Edit
                             </button>
-                            <form action="{{ route('room_facilities.destroy', $facility->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus fasilitas ini?')">
+                            <form action="{{ route('room_facilities.destroy', $facility->id) }}" method="POST"
+                                onsubmit="return confirm('Yakin ingin menghapus fasilitas ini?')">
                                 @csrf
                                 @method('DELETE')
-                                <button class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded shadow text-sm">
+                                <button class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded-lg shadow-sm text-xs transition-all">
                                     Hapus
                                 </button>
                             </form>
@@ -52,17 +54,18 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="4" class="text-center py-4 text-gray-500">Belum ada data fasilitas.</td>
+                        <td colspan="4" class="text-center py-6 text-gray-400 text-sm">Belum ada data fasilitas.</td>
                     </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
 
-        <div class="mt-4">
+        <div class="mt-6">
             {{ $facilities->links() }}
         </div>
     </div>
+
 
     <div id="createModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative">

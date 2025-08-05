@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\City;
 use App\Models\Hotel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -11,18 +12,19 @@ class HotelController extends Controller
     public function index()
     {
         $hotels = Hotel::latest()->paginate(10);
-        return view('hotels.list', compact('hotels'));
+        $cities = City::all();
+
+        return view('hotels.list', compact('hotels', 'cities'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name_hotel' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'city' => 'required|string|max:100',
-            'province' => 'required|string|max:100',
+            'address' => 'required|string',
+            'city_id' => 'required|exists:cities,id',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'customer_service_phone' => 'nullable|string|max:20',
         ]);
 
@@ -34,27 +36,25 @@ class HotelController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Hotel berhasil ditambahkan.',
-            'data' => $hotel,
-        ], 201);
+            'message' => 'Hotel berhasil ditambahkan',
+            'data' => $hotel
+        ]);
     }
 
-    public function update(Request $request, Hotel $hotel)
+    public function update(Request $request, $id)
     {
+        $hotel = Hotel::findOrFail($id);
+
         $validated = $request->validate([
             'name_hotel' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'city' => 'required|string|max:100',
-            'province' => 'required|string|max:100',
+            'address' => 'required|string',
+            'city_id' => 'required|exists:cities,id',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'customer_service_phone' => 'nullable|string|max:20',
         ]);
 
         if ($request->hasFile('image')) {
-            if ($hotel->image && Storage::disk('public')->exists($hotel->image)) {
-                Storage::disk('public')->delete($hotel->image);
-            }
             $validated['image'] = $request->file('image')->store('hotels', 'public');
         }
 
@@ -62,8 +62,8 @@ class HotelController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Hotel berhasil diperbarui.',
-            'data' => $hotel,
+            'message' => 'Hotel berhasil diperbarui',
+            'data' => $hotel
         ]);
     }
 

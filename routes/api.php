@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Admin\BookingController;
+use App\Http\Controllers\Api\Admin\CityApiController;
+use App\Http\Controllers\Api\Admin\FloorApiController;
 use App\Http\Controllers\Api\Admin\HotelApiController;
 use App\Http\Controllers\Api\Admin\RoomApiController;
 use App\Http\Controllers\Api\Admin\RoomTypeApiController;
@@ -12,6 +14,7 @@ use App\Http\Controllers\Api\Admin\RoomFacilityApiController;
 use App\Http\Controllers\Api\Admin\UploadPhotosApiController;
 use App\Http\Controllers\Api\RoomFacilityController;
 use App\Http\Controllers\Api\Admin\PaymentAPIController;
+use App\Http\Controllers\Api\Admin\ProvinceApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +42,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('payments/{id}', [PaymentAPIController::class, 'show']);
     });
 
-
     Route::prefix('admin')->group(function () {
         Route::get('/room-facilities', [RoomFacilityApiController::class, 'index']);
         Route::post('/room-facilities', [RoomFacilityApiController::class, 'store']);
@@ -58,5 +60,29 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('payments/{id}', [PaymentAPIController::class, 'show']);
         Route::post('payments/{id}/verify', [PaymentAPIController::class, 'verify']);
         Route::delete('payments/{id}', [PaymentAPIController::class, 'destroy']);
+
+        Route::get('/provinces', [ProvinceApiController::class, 'index']);
+        Route::post('/provinces', [ProvinceApiController::class, 'store']);
+        Route::get('/provinces/{id}', [ProvinceApiController::class, 'show']);
+        Route::put('/provinces/{id}', [ProvinceApiController::class, 'update']);
+        Route::delete('/provinces/{id}', [ProvinceApiController::class, 'destroy']);
+        Route::get('/provinces/{id}/cities', [ProvinceApiController::class, 'cities']);
+
+        Route::get('/cities', [CityApiController::class, 'index']);
+        Route::post('/cities', [CityApiController::class, 'store']);
+        Route::get('/cities/{id}', [CityApiController::class, 'show']);
+        Route::put('/cities/{id}', [CityApiController::class, 'update']);
+        Route::delete('/cities/{id}', [CityApiController::class, 'destroy']);
+        Route::get('/cities/{id}/hotels', [CityApiController::class, 'hotels']);
+    });
+
+    Route::prefix('floors')->group(function () {
+        Route::get('/', [FloorApiController::class, 'index']);
+        Route::post('/', [FloorApiController::class, 'store']);
+        Route::get('/{id}', [FloorApiController::class, 'show']);
+        Route::put('/{id}', [FloorApiController::class, 'update']);
+        Route::delete('/{id}', [FloorApiController::class, 'destroy']);
+
+        Route::get('/hotel/{hotelId}', [FloorApiController::class, 'getFloorsByHotel']);
     });
 });
