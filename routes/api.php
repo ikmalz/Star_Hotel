@@ -15,6 +15,8 @@ use App\Http\Controllers\Api\Admin\UploadPhotosApiController;
 use App\Http\Controllers\Api\RoomFacilityController;
 use App\Http\Controllers\Api\Admin\PaymentAPIController;
 use App\Http\Controllers\Api\Admin\ProvinceApiController;
+use App\Http\Controllers\Api\User\UserBookingController;
+use App\Http\Controllers\Api\User\UserPaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,9 +39,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/room-facilities', [RoomFacilityController::class, 'index']);
         Route::get('/room-facilities/{room_type_id}', [RoomFacilityController::class, 'show']);
 
-        Route::apiResource('bookings', BookingController::class);
-        Route::post('payments', [PaymentAPIController::class, 'store']);
-        Route::get('payments/{id}', [PaymentAPIController::class, 'show']);
+        Route::apiResource('bookings', UserBookingController::class);
+        Route::post('bookings/{id}/checkout', [UserBookingController::class, 'checkout']);
+
+        Route::get('payments', [UserPaymentController::class, 'index']);
+        Route::post('payments', [UserPaymentController::class, 'store']);
+        Route::get('payments/{id}', [UserPaymentController::class, 'show']);
+        Route::post('payments/{id}/request-refund', [UserPaymentController::class, 'requestRefund']);
     });
 
     Route::prefix('admin')->group(function () {

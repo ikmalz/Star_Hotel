@@ -22,7 +22,7 @@ class RoomTypeController extends Controller
             'hotel_id' => 'required|exists:hotels,id',
             'name_type' => 'required|string',
             'capacity' => 'required|integer',
-            'nightly_rate' => 'required|integer',
+            'price_per_night' => 'required|integer|min:0', 
             'photos.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
@@ -38,7 +38,7 @@ class RoomTypeController extends Controller
             'hotel_id' => $request->hotel_id,
             'name_type' => $request->name_type,
             'capacity' => $request->capacity,
-            'nightly_rate' => $request->nightly_rate,
+            'price_per_night' => $request->price_per_night,
             'photos' => $photoPaths,
         ]);
 
@@ -50,7 +50,7 @@ class RoomTypeController extends Controller
         $request->validate([
             'name_type' => 'required|string',
             'capacity' => 'required|integer',
-            'nightly_rate' => 'required|numeric',
+            'price_per_night' => 'required|numeric|min:0', 
             'photos.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
@@ -59,21 +59,17 @@ class RoomTypeController extends Controller
         $roomType->update([
             'name_type' => $request->name_type,
             'capacity' => $request->capacity,
-            'nightly_rate' => $request->nightly_rate,
+            'price_per_night' => $request->price_per_night,
         ]);
 
         if ($request->hasFile('photos')) {
             $photoPaths = [];
-
             foreach ($request->file('photos') as $photo) {
                 $path = $photo->store('room_photos', 'public');
                 $photoPaths[] = $path;
             }
-
             $roomType->update(['photos' => $photoPaths]);
         }
-
-
 
         return redirect()->back()->with('success', 'Room Type updated!');
     }

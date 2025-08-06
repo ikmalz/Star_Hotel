@@ -64,6 +64,7 @@ Route::middleware('auth')->group(function () {
     Route::get('payments/{id}', [PaymentWebController::class, 'show'])->name('payments.show');
     Route::post('payments/{id}/verify', [PaymentWebController::class, 'verify'])->name('payments.verify');
     Route::delete('payments/{id}', [PaymentWebController::class, 'destroy'])->name('payments.destroy');
+    Route::patch('/admin/payments/{payment}/refund', [PaymentWebController::class, 'refund'])->name('admin.payments.refund');
 
     Route::get('/admin/payments/{id}', [PaymentWebController::class, 'show'])->name('payments.show');
     Route::patch('/admin/payments/{id}/verify', [PaymentWebController::class, 'verify'])->name('payments.verify');

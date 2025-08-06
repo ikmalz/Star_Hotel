@@ -100,7 +100,7 @@
                             @endif
                         </td>
                         <td class="px-4 py-3">{{ $type->capacity }}</td>
-                        <td class="px-4 py-3">{{ number_format($type->nightly_rate) }}</td>
+                        <td class="px-4 py-3">{{ number_format($type->price_per_night) }}</td>
                         <td class="px-4 py-3">
                             @if(!empty($type->photos) && is_array($type->photos))
                             <div class="flex gap-2">
@@ -124,7 +124,7 @@
                             </form>
 
                             <button class="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded-lg transition"
-                                onclick="openEditModal({{ $type->id }}, '{{ $type->name_type }}', '{{ $type->facility }}', {{ $type->capacity }}, {{ $type->nightly_rate }})">
+                                onclick="openEditModal({{ $type->id }}, '{{ $type->name_type }}', '{{ $type->facility }}', {{ $type->capacity }}, {{ $type->price_per_night }})">
                                 Edit
                             </button>
 
@@ -155,7 +155,7 @@
                 <div class="grid grid-cols-1 gap-4">
                     <input type="text" id="editNameType" name="name_type" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
                     <input type="number" id="editCapacity" name="capacity" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
-                    <input type="number" id="editNightlyRate" name="nightly_rate" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                    <input type="number" id="editNightlyRate" name="price_per_night" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
                     <input type="file" name="photos[]" multiple class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                 </div>
                 <div class="flex justify-end mt-4">
@@ -170,14 +170,14 @@
 
 
     <script>
-        function openEditModal(id, name_type, facility, capacity, nightly_rate) {
+        function openEditModal(id, name_type, facility, capacity, price_per_night) {
             const modal = document.getElementById('editModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
 
             document.getElementById('editNameType').value = name_type;
             document.getElementById('editCapacity').value = capacity;
-            document.getElementById('editNightlyRate').value = nightly_rate;
+            document.getElementById('editNightlyRate').value = price_per_night;
 
             const form = document.getElementById('editForm');
             form.action = `/room-types/${id}`;
