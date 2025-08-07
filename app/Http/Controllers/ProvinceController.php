@@ -11,12 +11,12 @@ class ProvinceController extends Controller
     public function index()
     {
         $provinces = Province::withCount('cities')->paginate(10);
-        return view('admin.provinces.index', compact('provinces'));
+        return view('provinces.list', compact('provinces'));
     }
 
     public function create()
     {
-        return view('admin.provinces.create');
+        return view('provinces.create');
     }
 
     public function store(Request $request)

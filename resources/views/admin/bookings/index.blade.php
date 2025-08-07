@@ -70,7 +70,7 @@
                             <span class="text-xs text-gray-400 italic">Final state</span>
                             @endif
 
-                            @if ($payment->payment_status === 'refunded')
+                            @if ($booking->payments->contains('payment_status', 'refunded'))
                             <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">Refunded</span>
                             @endif
                         </td>

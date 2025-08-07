@@ -17,6 +17,13 @@ class FloorController extends Controller
         return view('floors.list', compact('roomType', 'floors'));
     }
 
+    public function all()
+    {
+        $floors = Floor::with('roomType.hotel')->get(); 
+        return view('floors.all', compact('floors'));
+    }
+
+
     public function store(Request $request, $roomTypeId)
     {
         $request->validate([

@@ -1,9 +1,9 @@
 <nav
     x-data="{ 
-        openAuth: {{ request()->routeIs('users.*') ? 'true' : 'false' }}, 
-        openMaster: {{ request()->routeIs('hotels.*') || request()->routeIs('room_facilities.*') ? 'true' : 'false' }},
-        openTransaction: {{ request()->routeIs('bookings.*') ? 'true' : 'false' }}
-    }"
+    openAuth: {{ request()->routeIs('users.*') ? 'true' : 'false' }}, 
+    openMaster: {{ (request()->routeIs('hotels.*') || request()->routeIs('room_facilities.*') || request()->routeIs('provinces.*') || request()->routeIs('cities.*') || request()->routeIs('floors.*')) ? 'true' : 'false' }},
+    openTransaction: {{ request()->routeIs('bookings.*') ? 'true' : 'false' }}
+}"
     class="bg-white w-64 h-screen shadow-lg fixed flex flex-col">
 
     <div class="h-16 flex items-center justify-center border-b">
@@ -62,6 +62,22 @@
                         {{ request()->routeIs('room_facilities.*') ? 'bg-gray-200 font-semibold text-gray-800' : 'text-gray-600 hover:bg-gray-100' }}">
                     Room Facilities
                 </a>
+                <a href="{{ route('provinces.index') }}"
+                    class="block px-5 py-2 rounded-md transition duration-150 ease-in-out
+                        {{ request()->routeIs('provinces*') ? 'bg-gray-200 font-semibold text-gray-800' : 'text-gray-600 hover:bg-gray-100' }}">
+                    Provinces
+                </a>
+                <a href="{{ route('cities.index') }}"
+                    class="block px-5 py-2 rounded-md transition duration-150 ease-in-out
+                        {{ request()->routeIs('cities.*') ? 'bg-gray-200 font-semibold text-gray-800' : 'text-gray-600 hover:bg-gray-100' }}">
+                    Cities
+                </a>
+                <a href="{{ route('floors.all') }}"
+                    class="block px-5 py-2 rounded-md transition duration-150 ease-in-out
+                        {{ request()->routeIs('floors.*') ? 'bg-gray-200 font-semibold text-gray-800' : 'text-gray-600 hover:bg-gray-100' }}">
+                    Floors
+                </a>
+
             </div>
         </div>
 

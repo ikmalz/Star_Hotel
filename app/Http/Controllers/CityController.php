@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\City;
 use App\Models\Province;
 use Illuminate\Http\Request;
@@ -12,59 +11,108 @@ class CityController extends Controller
     public function index()
     {
         $cities = City::with('province')->paginate(10);
-        return view('admin.cities.index', compact('cities'));
+        $provinces = Province::all();
+        return view('cities.list', compact('cities', 'provinces'));
     }
 
     public function create()
     {
         $provinces = Province::all();
-        return view('admin.cities.create', compact('provinces'));
+        return view('cities.list', compact('provinces')); 
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'province_id' => 'required|exists:provinces,id',
-            'name' => 'required|string|max:255',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'province_id' => 'required|exists:provinces,id'
+            ]);
 
-        City::create([
-            'province_id' => $request->province_id,
-            'name' => $request->name,
-        ]);
+            $city = City::create([
+                'name' => $request->name,
+                'province_id' => $request->province_id
+            ]);
 
-        return redirect()->route('cities.index')->with('success', 'City berhasil ditambahkan.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Kota berhasil ditambahkan',
+                'data' => $city
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak valid',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menambahkan kota: ' . $e->getMessage()
+            ], 500);
+        }
     }
-
-    public function edit($id)
+    public function edit(City $city)
     {
-        $city = City::findOrFail($id);
-        $provinces = Province::all();
-        return view('admin.cities.edit', compact('city', 'provinces'));
+        try {
+            return response()->json([
+                'id' => $city->id,
+                'name' => $city->name,
+                'province_id' => $city->province_id
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Gagal memuat data kota: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, City $city)
     {
-        $city = City::findOrFail($id);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'province_id' => 'required|exists:provinces,id'
+            ]);
 
-        $request->validate([
-            'province_id' => 'required|exists:provinces,id',
-            'name' => 'required|string|max:255',
-        ]);
+            $city->update([
+                'name' => $request->name,
+                'province_id' => $request->province_id
+            ]);
 
-        $city->update([
-            'province_id' => $request->province_id,
-            'name' => $request->name,
-        ]);
-
-        return redirect()->route('cities.index')->with('success', 'City berhasil diperbarui.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Kota berhasil diperbarui',
+                'data' => $city->fresh() 
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak valid',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui kota: ' . $e->getMessage()
+            ], 500);
+        }
     }
-
     public function destroy($id)
     {
-        $city = City::findOrFail($id);
-        $city->delete();
+        try {
+            $city = City::findOrFail($id);
+            $city->delete();
 
-        return redirect()->route('cities.index')->with('success', 'City berhasil dihapus.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Kota berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus kota: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

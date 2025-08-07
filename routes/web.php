@@ -73,6 +73,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('cities', CityController::class);
 
     Route::prefix('floors')->group(function () {
+        Route::get('/floors', [FloorController::class, 'all'])->name('floors.all');
         Route::get('/{roomType}', [FloorController::class, 'index'])->name('floors.index');
         Route::post('/{roomType}', [FloorController::class, 'store'])->name('floors.store');
         Route::delete('/delete/{id}', [FloorController::class, 'destroy'])->name('floors.destroy');
