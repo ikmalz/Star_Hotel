@@ -15,8 +15,10 @@ use App\Http\Controllers\Api\Admin\UploadPhotosApiController;
 use App\Http\Controllers\Api\RoomFacilityController;
 use App\Http\Controllers\Api\Admin\PaymentAPIController;
 use App\Http\Controllers\Api\Admin\ProvinceApiController;
+use App\Http\Controllers\Api\Admin\RatingController;
 use App\Http\Controllers\Api\User\UserBookingController;
 use App\Http\Controllers\Api\User\UserPaymentController;
+use App\Http\Controllers\Api\User\UserRatingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,6 +48,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('payments', [UserPaymentController::class, 'store']);
         Route::get('payments/{id}', [UserPaymentController::class, 'show']);
         Route::post('payments/{id}/request-refund', [UserPaymentController::class, 'requestRefund']);
+
+        Route::get('ratings', [UserRatingController::class, 'index']);
+        Route::get('ratings/{id}', [UserRatingController::class, 'show']);
+        Route::post('ratings', [UserRatingController::class, 'store']);
     });
 
     Route::prefix('admin')->group(function () {
@@ -80,6 +86,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/cities/{id}', [CityApiController::class, 'update']);
         Route::delete('/cities/{id}', [CityApiController::class, 'destroy']);
         Route::get('/cities/{id}/hotels', [CityApiController::class, 'hotels']);
+
+        Route::get('ratings', [RatingController::class, 'index']);
     });
 
     Route::prefix('floors')->group(function () {

@@ -41,4 +41,5 @@ class Payment extends Model
     {
         return $this->payment_status === 'refunded';
     }
+    
 }

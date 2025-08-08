@@ -8,10 +8,18 @@
     <div class="p-6 bg-white shadow rounded-lg">
         <div class="flex justify-between mb-4">
             <h3 class="text-lg font-bold">Daftar Lantai</h3>
-            <a href="{{ route('room-types.index', $roomType->hotel->id) }}" class="text-black hover:underline">
-                ← Kembali ke Room Types
-            </a>
+            <div class="flex gap-3">
+                <a href="{{ route('rooms.index', ['roomTypeId' => $roomType->id]) }}"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm">
+                    Lihat Rooms
+                </a>
+                <a href="{{ route('room-types.index', $roomType->hotel->id) }}"
+                    class="text-black hover:underline px-3 py-2 text-sm">
+                    ← Kembali ke Room Types
+                </a>
+            </div>
         </div>
+
 
         @if(session('success'))
         <div class="p-3 bg-green-200 text-green-800 rounded mb-3">

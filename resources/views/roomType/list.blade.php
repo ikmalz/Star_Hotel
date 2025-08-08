@@ -23,7 +23,7 @@
             <input type="hidden" name="hotel_id" value="{{ $hotel->id }}">
             <input type="text" name="name_type" placeholder="Nama Tipe" class="border p-2 rounded" required>
             <input type="number" name="capacity" placeholder="Kapasitas" class="border p-2 rounded" required>
-            <input type="number" name="nightly_rate" placeholder="Harga/Malam" class="border p-2 rounded" required>
+            <input type="number" name="price_per_night" placeholder="Harga/Malam" class="border p-2 rounded" required>
             <input type="file" name="photos[]" multiple class="border p-2 rounded">
             <button class="bg-gray-500 text-white rounded px-4 py-2">Tambah</button>
         </form>
@@ -88,7 +88,7 @@
                     <tr class="border-t hover:bg-gray-50 transition">
                         <td class="px-4 py-3">{{ $type->id }}</td>
                         <td class="px-4 py-3">{{ $type->name_type }}</td>
-                         <td class="px-4 py-3">
+                        <td class="px-4 py-3">
                             @if($type->facilities->count())
                             <ul class="list-disc pl-4">
                                 @foreach($type->facilities as $facility)
@@ -128,9 +128,9 @@
                                 Edit
                             </button>
 
-                            <a href="{{ route('rooms.index', ['roomTypeId' => $type->id]) }}"
+                            <a href="{{ route('floors.index', ['roomType' => $type->id]) }}"
                                 class="px-3 py-1 text-sm text-black/50 font-medium bg-gray-500/20 hover:bg-gray-500 hover:text-white rounded-lg transition">
-                                Room
+                                Floor
                             </a>
                         </td>
                     </tr>

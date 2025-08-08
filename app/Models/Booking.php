@@ -21,6 +21,7 @@ class Booking extends Model
         'nights',
         'price_per_night',
         'price_total',
+        'refund_requested',
         'status_booking',
         'code_booking',
     ];
@@ -29,6 +30,7 @@ class Booking extends Model
     protected $casts = [
         'checkin_at' => 'datetime',
         'checkout_at' => 'datetime',
+        'refund_requested' => 'boolean'
     ];
 
     public function user()
@@ -68,7 +70,7 @@ class Booking extends Model
 
     public function province()
     {
-        return $this->city?->province(); 
+        return $this->city?->province();
     }
 
     public function getStatusBadgeClassAttribute()

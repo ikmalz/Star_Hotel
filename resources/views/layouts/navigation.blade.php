@@ -1,9 +1,11 @@
 <nav
     x-data="{ 
-    openAuth: {{ request()->routeIs('users.*') ? 'true' : 'false' }}, 
-    openMaster: {{ (request()->routeIs('hotels.*') || request()->routeIs('room_facilities.*') || request()->routeIs('provinces.*') || request()->routeIs('cities.*') || request()->routeIs('floors.*')) ? 'true' : 'false' }},
-    openTransaction: {{ request()->routeIs('bookings.*') ? 'true' : 'false' }}
-}"
+        openAuth: {{ request()->routeIs('users.*') ? 'true' : 'false' }}, 
+        openMaster: {{ (request()->routeIs('hotels.*') || request()->routeIs('room_facilities.*') || request()->routeIs('provinces.*') || request()->routeIs('cities.*') || request()->routeIs('floors.*')) ? 'true' : 'false' }},
+        openTransaction: {{ request()->routeIs('bookings.*') ? 'true' : 'false' }},
+        openFeedback: {{ request()->routeIs('ratings.*') ? 'true' : 'false' }}
+    }"
+
     class="bg-white w-64 h-screen shadow-lg fixed flex flex-col">
 
     <div class="h-16 flex items-center justify-center border-b">
@@ -101,6 +103,28 @@
                 </a>
             </div>
         </div>
+
+        {{-- Feedback --}}
+        <div class="mt-3">
+            <button
+                @click="openFeedback = !openFeedback"
+                class="w-full flex items-center justify-between px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out focus:outline-none">
+                <span>Feedback</span>
+                <svg class="w-4 h-4 transform transition-transform duration-200"
+                    :class="{ 'rotate-180': openFeedback }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <div x-show="openFeedback" x-transition class="ml-5 mt-2 space-y-1">
+                <a href="{{ route('ratings.index') }}"
+                    class="block px-5 py-2 rounded-md transition duration-150 ease-in-out
+                {{ request()->routeIs('ratings.*') ? 'bg-gray-200 font-semibold text-gray-800' : 'text-gray-600 hover:bg-gray-100' }}">
+                    Ratings
+                </a>
+            </div>
+        </div>
+
     </div>
 
     <div class="border-t p-4">

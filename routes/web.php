@@ -13,6 +13,7 @@ use App\Http\Controllers\CityController;
 use App\Http\Controllers\FloorController;
 use App\Http\Controllers\PaymentWebController;
 use App\Http\Controllers\ProvinceController;
+use App\Http\Controllers\RatingWebController;
 
     /*
 |--------------------------------------------------------------------------
@@ -71,6 +72,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('provinces', ProvinceController::class);
     Route::resource('cities', CityController::class);
+
+    Route::get('/ratings', [RatingWebController::class, 'index'])->name('ratings.index');
 
     Route::prefix('floors')->group(function () {
         Route::get('/floors', [FloorController::class, 'all'])->name('floors.all');

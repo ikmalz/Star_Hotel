@@ -12,7 +12,7 @@
         </div>
         @endif
 
-        <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="bg-white shadow rounded-lg overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-100">
                     <tr>
@@ -43,14 +43,20 @@
                             @forelse ($booking->payments as $payment)
                             <div class="mb-1">
                                 <span class="block">Rp {{ number_format($payment->amount,0,',','.') }}</span>
-                                <span class="block text-xs text-gray-500">{{ ucfirst($payment->payment_status) }}</span>
+                                <span class="inline-block px-2 py-0.5 text-xs rounded-full
+                                    @if ($payment->payment_status === 'paid') bg-green-100 text-green-700
+                                    @elseif ($payment->payment_status === 'pending') bg-yellow-100 text-yellow-700
+                                    @elseif ($payment->payment_status === 'failed') bg-red-100 text-red-700
+                                    @elseif ($payment->payment_status === 'refunded') bg-blue-100 text-blue-700
+                                    @else bg-gray-100 text-gray-700 @endif">
+                                    {{ ucfirst($payment->payment_status) }}
+                                </span>
 
                                 @if ($payment->payment_status === 'refunded')
                                 <span class="block text-red-600 text-xs">
                                     Refunded: Rp {{ number_format($payment->refund_amount ?? 0,0,',','.') }}
                                 </span>
                                 @endif
-
                                 <a href="{{ route('payments.show', $payment->id) }}"
                                     class="mt-1 inline-block px-3 py-1 bg-gray-500 text-white text-xs rounded hover:bg-gray-600 transition">
                                     Detail
@@ -63,7 +69,7 @@
                         <td class="px-4 py-3 text-center">
                             @if (!in_array($booking->status_booking, ['checked_out','canceled']))
                             <button onclick="openModal('{{ $booking->id }}')"
-                                class="px-3 py-1 bg-gray-500 text-white text-xs rounded hover:bg-gray-600 transition">
+                                class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition">
                                 Update
                             </button>
                             @else
@@ -76,10 +82,8 @@
                         </td>
                     </tr>
 
-                    <div id="modal-{{ $booking->id }}"
-                        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm">
-                        <div class="bg-gray-50 rounded-xl shadow-xl w-full max-w-lg p-6 relative">
-
+                    <div id="modal-{{ $booking->id }}" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+                        <div class="bg-white rounded-xl shadow-2xl w-full max-w-xl p-6 relative">
                             <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-4">
                                 <h3 class="text-lg font-semibold text-gray-700">
                                     Update Booking <span class="text-gray-500 text-sm">#{{ $booking->code_booking }}</span>
@@ -87,6 +91,37 @@
                                 <button type="button" onclick="closeModal('{{ $booking->id }}')"
                                     class="text-gray-400 hover:text-gray-600 transition text-xl leading-none">&times;</button>
                             </div>
+                            @php
+                            $firstPayment = $booking->payments->first();
+                            @endphp
+
+                            @if ($firstPayment && $firstPayment->payment_status === 'refund_requested')
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 p-4 rounded-md mb-4">
+                                <div class="font-semibold mb-1">🛑 Permintaan Refund:</div>
+                                <p class="text-sm">{{ $firstPayment->request_refund_reason }}</p>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 mb-4">
+                                <form action="{{ route('bookings.update', $booking->id) }}" method="POST" onsubmit="return confirm('Proses refund dan kembalikan dana ke user?')">
+                                    @csrf @method('PATCH')
+                                    <input type="hidden" name="action" value="refund" />
+                                    <button type="submit"
+                                        class="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+                                        ✅ Approve
+                                    </button>
+                                </form>
+
+                                <form action="{{ route('bookings.update', $booking->id) }}" method="POST" onsubmit="return confirm('Tolak permintaan refund ini?')">
+                                    @csrf @method('PATCH')
+                                    <input type="hidden" name="action" value="reject_refund" />
+                                    <button type="submit"
+                                        class="w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                                        ❌ Reject
+                                    </button>
+                                </form>
+                            </div>
+
+                            @endif
 
                             <div class="text-sm text-gray-600 space-y-1 mb-4">
                                 @php
@@ -111,6 +146,7 @@
                                 User belum melakukan pembayaran, Anda tidak bisa mengupdate booking ini.
                             </div>
 
+
                             <div class="flex justify-end">
                                 <button type="button" onclick="closeModal('{{ $booking->id }}')"
                                     class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
@@ -129,7 +165,7 @@
                                         class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-gray-300 focus:outline-none">
                                         <option value="">-- Pilih Room --</option>
                                         @foreach ($booking->roomType->rooms()->where('status','available')->get() as $room)
-                                        <option value="{{ $room->id }}">
+                                        <option value="{{ $room->id }}" @selected($room->id == $booking->room_id)>
                                             Room {{ $room->room_number }} (Lantai {{ $room->floor->name ?? '-' }})
                                         </option>
                                         @endforeach
@@ -137,7 +173,7 @@
                                 </div>
                                 @endif
 
-                                <div class="flex justify-end gap-3 pt-3 border-t border-gray-200">
+                                <div class="flex justify-end gap-2 pt-4 border-t border-gray-200">
                                     <button type="button" onclick="closeModal('{{ $booking->id }}')"
                                         class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
                                         Batal
@@ -145,31 +181,31 @@
 
                                     @if ($booking->status_booking === 'pending')
                                     <button name="status_booking" value="paid"
-                                        class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition">
+                                        class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
                                         Approve Payment
                                     </button>
                                     <button name="status_booking" value="canceled"
-                                        class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
+                                        class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
                                         Cancel
                                     </button>
 
                                     @elseif ($booking->status_booking === 'paid')
                                     <button name="status_booking" value="checked_in"
-                                        class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition">
+                                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
                                         Check In
                                     </button>
                                     <button name="status_booking" value="canceled"
-                                        class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
+                                        class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
                                         Cancel
                                     </button>
 
                                     @elseif ($booking->status_booking === 'checkout_pending')
                                     <button name="status_booking" value="checked_out"
-                                        class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition">
+                                        class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
                                         Approve Checkout
                                     </button>
                                     <button name="status_booking" value="canceled"
-                                        class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
+                                        class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
                                         Reject Checkout
                                     </button>
                                     @endif

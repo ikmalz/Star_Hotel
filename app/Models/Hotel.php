@@ -33,15 +33,25 @@ class Hotel extends Model
         return $this->belongsTo(City::class);
     }
 
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+    public function averageRating()
+    {
+        return $this->ratings()->avg('value');
+    }
+
     public function province()
     {
         return $this->hasOneThrough(
             Province::class,
             City::class,
-            'id',        
-            'id',        
-            'city_id',   
-            'province_id' 
+            'id',
+            'id',
+            'city_id',
+            'province_id'
         );
     }
 }

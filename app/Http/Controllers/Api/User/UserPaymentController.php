@@ -7,6 +7,7 @@ use App\Http\Resources\PaymentResource;
 use App\Models\Booking;
 use App\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -84,33 +85,41 @@ class UserPaymentController extends Controller
 
     public function requestRefund(Request $request, $id)
     {
-        $payment = Payment::with('booking')->findOrFail($id);
+        DB::beginTransaction();
 
-        if ($payment->booking->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Anda tidak bisa refund pembayaran milik orang lain.'], 403);
+        try {
+            $payment = Payment::with('booking')->findOrFail($id);
+
+            if ($payment->booking->user_id !== $request->user()->id) {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
+
+            if ($payment->payment_status !== 'paid') {
+                return response()->json(['message' => 'Payment not eligible for refund'], 422);
+            }
+
+            $payment->update([
+                'payment_status' => 'refund_requested',
+                'request_refund_at' => now(),
+                'request_refund_reason' => $request->input('reason'),
+            ]);
+
+            $payment->booking->update([
+                'refund_requested' => true
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Refund request submitted. Waiting for admin approval.',
+                'data' => new PaymentResource($payment->fresh(['booking']))
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Failed to process refund request',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        if (!$payment->isPaid()) {
-            return response()->json(['message' => 'Pembayaran ini belum berhasil.'], 422);
-        }
-
-        if (in_array($payment->payment_status, ['refund_requested', 'refunded'])) {
-            return response()->json(['message' => 'Refund sudah diajukan atau diproses.'], 422);
-        }
-
-        if ($payment->booking->status_booking === 'completed') {
-            return response()->json(['message' => 'Booking ini sudah selesai dan tidak bisa direfund.'], 422);
-        }
-
-        $payment->update([
-            'payment_status' => 'refunded', 
-            'request_refund_at' => now(),
-            'request_refund_reason' => $request->input('reason'),
-        ]);
-
-        return response()->json([
-            'message' => 'Permintaan refund berhasil diajukan.',
-            'data' => new PaymentResource($payment->fresh('booking'))
-        ]);
     }
 }

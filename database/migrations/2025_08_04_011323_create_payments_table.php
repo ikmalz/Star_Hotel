@@ -33,7 +33,13 @@ return new class extends Migration
             $table->string('payment_proof')->nullable();
             $table->string('transaction_id')->nullable();
             $table->string('va_number')->nullable();
-            $table->enum('payment_status', ['pending', 'paid', 'failed', 'refunded'])->default('pending');
+            $table->enum('payment_status', [
+                'pending',
+                'paid',
+                'failed',
+                'refunded',
+                'refund_requested'
+            ])->default('pending');
             $table->integer('refund_amount')->nullable();
             $table->timestamp('refunded_at')->nullable();
             $table->text('refund_reason')->nullable();

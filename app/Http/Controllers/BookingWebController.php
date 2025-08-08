@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\Room;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BookingWebController extends Controller
 {
@@ -17,7 +18,8 @@ class BookingWebController extends Controller
 
     public function show($id)
     {
-        $booking = Booking::with(['user', 'room', 'roomType', 'payments', 'city', 'floor', 'floor', 'city.province'])->findOrFail($id);
+        $booking = Booking::with(['user', 'room', 'roomType', 'payments', 'city', 'floor', 'city.province'])->findOrFail($id);
+        $firstPayment = $booking->payments->first();
         return view('admin.bookings.show', compact('booking'));
     }
 
@@ -35,7 +37,7 @@ class BookingWebController extends Controller
 
     public function update(Request $request, $id)
     {
-        $booking = Booking::with('roomType')->findOrFail($id);
+        $booking = Booking::with('roomType', 'payments')->findOrFail($id);
 
         $request->validate([
             'status_booking' => 'nullable|in:pending,paid,checked_in,checkout_pending,checked_out,canceled',
@@ -78,6 +80,63 @@ class BookingWebController extends Controller
             $dataUpdate['price_total'] = $nights * $pricePerNight;
         }
 
+        if ($request->action === 'refund') {
+            $payment = $booking->payments->first();
+
+            if (!$payment || $payment->payment_status !== 'refund_requested') {
+                return back()->with('error', 'Refund request not found or already processed');
+            }
+
+            DB::beginTransaction();
+            try {
+                $payment->update([
+                    'payment_status' => 'refunded',
+                    'refund_amount' => $payment->amount,
+                    'refunded_at' => now(),
+                ]);
+
+                $booking->update([
+                    'status_booking' => 'canceled',
+                    'refund_requested' => false
+                ]);
+
+                if ($booking->room) {
+                    $booking->room->update(['status' => 'available']);
+                }
+
+                DB::commit();
+                return back()->with('success', 'Refund berhasil diproses dan dana dikembalikan.');
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return back()->with('error', 'Gagal memproses refund: ' . $e->getMessage());
+            }
+        }
+
+        if ($request->action === 'reject_refund') {
+            $payment = $booking->payments()->latest()->first();
+
+            if ($payment && $payment->payment_status === 'refund_requested') {
+                $payment->update([
+                    'payment_status' => 'paid',
+                    'request_refund_at' => null,
+                    'request_refund_reason' => null,
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Refund telah ditolak.');
+        }
+
+        if (
+            $request->status_booking === 'canceled' &&
+            $booking->status_booking === 'checkout_pending'
+        ) {
+            $booking->status_booking = 'checked_in';
+            $booking->save();
+
+            return redirect()->route('bookings.index')->with('success', 'Checkout telah direject. Status dikembalikan ke Check-in.');
+        }
+
+
         $booking->update($dataUpdate);
 
         if ($request->status_booking === 'checked_out' && $booking->room_id) {
@@ -88,17 +147,36 @@ class BookingWebController extends Controller
             Room::where('id', $booking->room_id)->update(['status' => 'available']);
         }
 
-        if ($request->status_booking === 'canceled' && $booking->status_booking === 'checkout_pending') {
-            $booking->update([
-                'status_booking' => 'checked_in',
-            ]);
-            return redirect()->route('bookings.index')->with('success', 'Checkout telah direject. Status dikembalikan ke Check-in.');
-        }
-
-
         return redirect()->route('bookings.index')->with('success', 'Booking berhasil diperbarui.');
     }
 
+    public function rejectRefund($id)
+    {
+        $booking = Booking::with('payments')->findOrFail($id);
+        $payment = $booking->payments->first();
+
+        if (!$payment || $payment->payment_status !== 'refund_requested') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Refund request not found'
+            ], 422);
+        }
+
+        $payment->update([
+            'payment_status' => 'paid',
+            'request_refund_at' => null,
+            'request_refund_reason' => null
+        ]);
+
+        $booking->update([
+            'refund_requested' => false
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Refund request rejected'
+        ]);
+    }
 
     public function destroy($id)
     {

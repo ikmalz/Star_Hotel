@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\RoomType;
+use App\Models\RoomFacility;
 use App\Models\Hotel;
 use Illuminate\Http\Request;
 
@@ -12,6 +13,7 @@ class RoomTypeController extends Controller
     {
         $hotel = Hotel::findOrFail($hotelId);
         $roomTypes = RoomType::with('facilities')->where('hotel_id', $hotelId)->get();
+        $facilities = RoomFacility::all();
 
         return view('roomType.list', compact('hotel', 'roomTypes'));
     }
