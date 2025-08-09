@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('name_type');
             $table->integer('capacity');
             $table->json('photos')->nullable();
-            $table->integer('nightly_rate');
+            $table->integer('price_per_night');
             $table->timestamps();
-        });
+            });
     }
 
 

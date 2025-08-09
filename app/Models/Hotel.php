@@ -54,4 +54,11 @@ class Hotel extends Model
             'province_id'
         );
     }
+
+  public function comment()
+{
+    return $this->hasMany(Comment::class);
+}
+
+
 }

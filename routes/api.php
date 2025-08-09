@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\Admin\RatingController;
 use App\Http\Controllers\Api\User\UserBookingController;
 use App\Http\Controllers\Api\User\UserPaymentController;
 use App\Http\Controllers\Api\User\UserRatingController;
+use App\Http\Controllers\Api\User\CommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,6 +53,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('ratings', [UserRatingController::class, 'index']);
         Route::get('ratings/{id}', [UserRatingController::class, 'show']);
         Route::post('ratings', [UserRatingController::class, 'store']);
+
+         Route::post('/comments', [CommentController::class, 'store']);
+
+    // Ambil daftar komentar berdasarkan tipe (hotel / room_type) dan ID
+    Route::get('/comments/{type}/{id}', [CommentController::class, 'list']);
     });
 
     Route::prefix('admin')->group(function () {

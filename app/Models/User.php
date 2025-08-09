@@ -50,4 +50,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Rating::class);
     }
+    // App\Models\User.php
+public function comments()
+{
+    return $this->hasMany(Comment::class);
+}
+
 }

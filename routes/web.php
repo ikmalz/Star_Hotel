@@ -14,7 +14,7 @@ use App\Http\Controllers\FloorController;
 use App\Http\Controllers\PaymentWebController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\RatingWebController;
-
+use App\Http\Controllers\CommentWebController;
     /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -34,6 +34,15 @@ Route::get('/', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
+
+
+Route::middleware('auth')->group(function () {
+    // route lain di atas...
+
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::resource('comments', CommentWebController::class)->only(['index', 'show', 'destroy']);
+    });
+});
 
 Route::middleware('auth')->group(function () {
     Route::resource('hotels', HotelController::class);
