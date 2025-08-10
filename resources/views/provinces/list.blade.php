@@ -125,17 +125,25 @@
         const editForm = document.getElementById('editForm');
         const editNameInput = document.getElementById('edit_name');
 
-        function openEditModal(id) {
-            fetch(`/provinces/${id}/edit`)
-                .then(res => res.json())
-                .then(data => {
-                    editForm.action = `/provinces/${id}`;
-                    editForm.setAttribute('data-id', id);
-                    editNameInput.value = data.name;
-                    editModal.classList.remove('hidden');
-                    editModal.classList.add('flex');
-                });
+     function openEditModal(id) {
+    fetch(`/provinces/${id}/edit`, {
+        headers: {
+            'Accept': 'application/json'
         }
+    })
+    .then(res => res.json())
+    .then(data => {
+        editForm.action = `/provinces/${id}`;
+        editForm.setAttribute('data-id', id);
+        editNameInput.value = data.name;
+        editModal.classList.remove('hidden');
+        editModal.classList.add('flex');
+    })
+    .catch(error => {
+        showFlashMessage('error', 'Gagal mengambil data provinsi');
+    });
+}
+
         function closeEditModal() {
             editModal.classList.add('hidden');
             editModal.classList.remove('flex');
@@ -166,14 +174,15 @@
                 const formData = new FormData(createForm);
 
                 try {
-                    const res = await fetch("{{ route('provinces.store') }}", {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        }
-                    });
-                    const data = await res.json();
+                  const res = await fetch("{{ route('provinces.store') }}", {
+    method: 'POST',
+    body: formData,
+    headers: {
+        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        'Accept': 'application/json'
+    }
+});
+const data = await res.json();
 
                     if (data.success) {
                         showFlashMessage('success', data.message);
@@ -196,15 +205,17 @@
                 const formData = new FormData(editForm);
 
                 try {
-                    const res = await fetch(`/provinces/${id}`, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'X-HTTP-Method-Override': 'PUT'
-                        }
-                    });
-                    const data = await res.json();
+              const res = await fetch(`/provinces/${id}`, {
+    method: 'POST',
+    body: formData,
+    headers: {
+        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        'X-HTTP-Method-Override': 'PUT',
+        'Accept': 'application/json'
+    }
+});
+const data = await res.json();
+
 
                     if (data.success) {
                         showFlashMessage('success', data.message);

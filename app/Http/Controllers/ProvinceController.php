@@ -19,37 +19,64 @@ class ProvinceController extends Controller
         return view('provinces.create');
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
+  public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+    ]);
 
-        Province::create([
-            'name' => $request->name,
-        ]);
+    $province = Province::create([
+        'name' => $request->name,
+    ]);
 
-        return redirect()->route('provinces.index')->with('success', 'Province berhasil ditambahkan.');
+    // Kalau request via AJAX, balikin JSON
+    if ($request->expectsJson()) {
+        return response()->json([
+            'success' => true,
+            'message' => 'Province berhasil ditambahkan.',
+            'data' => $province
+        ]);
     }
 
-    public function edit($id)
-    {
-        $province = Province::findOrFail($id);
-        return view('admin.provinces.edit', compact('province'));
-    }
+    return redirect()->route('provinces.index')
+        ->with('success', 'Province berhasil ditambahkan.');
+}
 
-    public function update(Request $request, $id)
-    {
-        $province = Province::findOrFail($id);
+public function update(Request $request, $id)
+{
+    $province = Province::findOrFail($id);
 
-        $request->validate([
-            'name' => 'required|string|max:255',
+    $request->validate([
+        'name' => 'required|string|max:255',
+    ]);
+
+    $province->update(['name' => $request->name]);
+
+    if ($request->expectsJson()) {
+        return response()->json([
+            'success' => true,
+            'message' => 'Province berhasil diperbarui.',
+            'data' => $province
         ]);
-
-        $province->update(['name' => $request->name]);
-
-        return redirect()->route('provinces.index')->with('success', 'Province berhasil diperbarui.');
     }
+
+    return redirect()->route('provinces.index')
+        ->with('success', 'Province berhasil diperbarui.');
+}
+
+public function edit($id)
+{
+    $province = Province::findOrFail($id);
+
+    // Kalau request dari fetch(), balikin JSON
+    if (request()->expectsJson()) {
+        return response()->json($province);
+    }
+
+    // Kalau request biasa, balikin view edit (opsional)
+    return view('provinces.edit', compact('province'));
+}
+
 
     public function destroy($id)
     {
