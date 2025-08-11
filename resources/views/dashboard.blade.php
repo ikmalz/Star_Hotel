@@ -2,18 +2,39 @@
     <div x-data="dashboard()" class="relative">
 
         <!-- Header -->
-        <header class="px-6 py-5 bg-white border-b border-gray-200">
-            <div class="max-w-7xl mx-auto flex justify-between items-center">
-                <h1 class="text-xl font-semibold text-gray-900">Dashboard</h1>
-                <button class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
-                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+       <header class="relative overflow-hidden bg-gradient-to-r from-sky-50 via-white to-sky-50 shadow-sm"
+            x-data="{ fly: false }"
+            x-init="setInterval(() => { fly = false; $nextTick(() => fly = true) }, 7000)">
+
+            <!-- Container -->
+            <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center relative z-10">
+                <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Dashboard</h1>
+                <button class="p-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors shadow-sm">
+                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 00-4-5.7V5a2 2 0 10-4 0v.3A6 6 0 006 11v3.2a2 2 0 01-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1" />
                     </svg>
                 </button>
             </div>
-        </header>
 
+            <!-- Pesawat Futuristik -->
+            <div x-show="fly" x-transition.opacity.duration.3000ms
+                class="absolute top-8 -left-32 z-0 animate-flyAcross">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"
+                    class="w-16 h-16 drop-shadow-[0_0_8px_rgba(59,130,246,0.7)] text-sky-500">
+                    <path fill="currentColor"
+                        d="M480 192l128-64-128-64-128 64 128 64zm-160-64l-128 64 128 64 128-64-128-64zm-160 64L32 128v64l128 64v-64zm128 64l-128 64v64l128-64v-64zm160 0v64l128 64v-64l-128-64zm-160 64v64l128 64v-64l-128-64z" />
+                    <!-- Afterburner -->
+                    <circle cx="40" cy="256" r="8" fill="url(#flame)" />
+                    <defs>
+                        <radialGradient id="flame" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#fbbf24" />
+                            <stop offset="100%" stop-color="#ef4444" stop-opacity="0" />
+                        </radialGradient>
+                    </defs>
+                </svg>
+            </div>
+        </header>
         <!-- Stats Cards -->
         <section class="px-6 py-6">
             <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
