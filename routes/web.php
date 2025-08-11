@@ -37,8 +37,6 @@ Route::get('/', function () {
 
 
 Route::middleware('auth')->group(function () {
-    // route lain di atas...
-
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('comments', CommentWebController::class)->only(['index', 'show', 'destroy']);
     });

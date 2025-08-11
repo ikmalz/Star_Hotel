@@ -2,11 +2,10 @@
     <div x-data="dashboard()" class="relative">
 
         <!-- Header -->
-       <header class="relative overflow-hidden bg-gradient-to-r from-sky-50 via-white to-sky-50 shadow-sm"
+       <header class="relative overflow-hidden bg-gradient-to-r from-sky-50 via-white to-sky-50 shadow-sm rouded-xl"
             x-data="{ fly: false }"
             x-init="setInterval(() => { fly = false; $nextTick(() => fly = true) }, 7000)">
 
-            <!-- Container -->
             <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center relative z-10">
                 <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Dashboard</h1>
                 <button class="p-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors shadow-sm">
@@ -17,14 +16,12 @@
                 </button>
             </div>
 
-            <!-- Pesawat Futuristik -->
             <div x-show="fly" x-transition.opacity.duration.3000ms
                 class="absolute top-8 -left-32 z-0 animate-flyAcross">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"
                     class="w-16 h-16 drop-shadow-[0_0_8px_rgba(59,130,246,0.7)] text-sky-500">
                     <path fill="currentColor"
                         d="M480 192l128-64-128-64-128 64 128 64zm-160-64l-128 64 128 64 128-64-128-64zm-160 64L32 128v64l128 64v-64zm128 64l-128 64v64l128-64v-64zm160 0v64l128 64v-64l-128-64zm-160 64v64l128 64v-64l-128-64z" />
-                    <!-- Afterburner -->
                     <circle cx="40" cy="256" r="8" fill="url(#flame)" />
                     <defs>
                         <radialGradient id="flame" cx="50%" cy="50%" r="50%">
@@ -36,7 +33,7 @@
             </div>
         </header>
         <!-- Stats Cards -->
-        <section class="px-6 py-6">
+        <section class=" py-6">
             <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                 <template x-for="(card, index) in cards" :key="index">
                     <div class="bg-white rounded-lg p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
@@ -52,7 +49,7 @@
         </section>
 
         <!-- Bookings Table -->
-        <section class="px-6 pb-10">
+        <section class=" pb-10">
             <div class="max-w-7xl mx-auto bg-white rounded-lg p-6 border border-gray-100 shadow-sm">
                 <div class="flex justify-between items-center mb-5">
                     <h2 class="text-lg font-semibold text-gray-900">Recent Bookings</h2>
