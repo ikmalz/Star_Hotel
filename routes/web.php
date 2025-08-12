@@ -15,6 +15,9 @@ use App\Http\Controllers\PaymentWebController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\RatingWebController;
 use App\Http\Controllers\CommentWebController;
+use App\Http\Controllers\DashboardController;
+
+
     /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -29,9 +32,10 @@ use App\Http\Controllers\CommentWebController;
 Route::middleware('auth')->get('/users', [UserController::class, 'index'])->name('users.index');
 
 
-Route::get('/', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 
 

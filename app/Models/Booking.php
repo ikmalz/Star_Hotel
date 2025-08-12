@@ -33,6 +33,12 @@ class Booking extends Model
         'refund_requested' => 'boolean'
     ];
 
+
+    public function hotel()
+{
+    return $this->belongsTo(\App\Models\Hotel::class, 'hotel_id');
+}
+
     public function user()
     {
         return $this->belongsTo(User::class);
