@@ -85,6 +85,27 @@ class UserBookingController extends Controller
             ->additional(['message' => 'Booking berhasil dibuat, silakan lakukan pembayaran.']);
     }
 
+    public function rejectBooking(Request $request, $id)
+    {
+        $booking = Booking::where('user_id', $request->user()->id)
+            ->whereIn('status_booking', ['pending'])
+            ->findOrFail($id);
+
+        if ($booking->status_booking === 'canceled') {
+            return response()->json([
+                'message' => 'Booking ini sudah dibatalkan sebelumnya.'
+            ], 422);
+        }
+
+        $booking->update([
+            'status_booking' => 'canceled',
+        ]);
+
+        return response()->json([
+            'message' => 'Booking berhasil ditolak/dibatalkan.',
+            'data' => new BookingResource($booking)
+        ]);
+    }
 
 
     public function show(Request $request, $id)

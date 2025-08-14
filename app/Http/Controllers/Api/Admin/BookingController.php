@@ -132,8 +132,6 @@ class BookingController extends Controller
         ], 201);
     }
 
-
-
     public function destroy($id)
     {
         $booking = Booking::findOrFail($id);

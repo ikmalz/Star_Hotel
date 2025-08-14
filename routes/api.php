@@ -44,6 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::apiResource('bookings', UserBookingController::class);
         Route::post('bookings/{id}/checkout', [UserBookingController::class, 'checkout']);
+        Route::post('bookings/{id}/cancel', [UserBookingController::class, 'rejectBooking']);
 
         Route::get('payments', [UserPaymentController::class, 'index']);
         Route::post('payments', [UserPaymentController::class, 'store']);
