@@ -85,6 +85,8 @@ class UserBookingController extends Controller
             ->additional(['message' => 'Booking berhasil dibuat, silakan lakukan pembayaran.']);
     }
 
+
+    //ini
     public function rejectBooking(Request $request, $id)
     {
         $booking = Booking::where('user_id', $request->user()->id)
